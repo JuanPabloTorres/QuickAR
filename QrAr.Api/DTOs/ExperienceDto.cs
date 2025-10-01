@@ -78,10 +78,15 @@ public static class MappingExtensions
 
     public static Asset ToEntity(this AssetCreateDto dto, Guid experienceId)
     {
-        if (!Enum.TryParse<AssetKind>(dto.Kind, ignoreCase: true, out var kind))
+        // Map frontend enum values to backend enum values
+        var kind = dto.Kind.ToLowerInvariant() switch
         {
-            throw new ArgumentException($"Invalid asset kind: {dto.Kind}");
-        }
+            "message" => AssetKind.Message,
+            "video" => AssetKind.Video,
+            "image" => AssetKind.Image,
+            "model3d" => AssetKind.Model3D,
+            _ => throw new ArgumentException($"Invalid asset kind: {dto.Kind}")
+        };
 
         return new Asset
         {
@@ -91,7 +96,9 @@ public static class MappingExtensions
             MimeType = dto.MimeType,
             FileSizeBytes = dto.FileSizeBytes,
             Text = dto.Text,
-            ExperienceId = experienceId
+            ExperienceId = experienceId,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
     }
 }

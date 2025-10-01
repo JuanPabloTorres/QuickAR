@@ -2,8 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { DarkModeToggle } from "@/components/ui/dark-mode-toggle";
-import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
+import {
+  Activity,
+  Home,
+  Menu,
+  Plus,
+  Settings,
+  TrendingUp,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
@@ -11,33 +19,19 @@ import React, { useState } from "react";
 interface NavItem {
   href: string;
   label: string;
-  icon:
-    | "home"
-    | "ar"
-    | "view"
-    | "settings"
-    | "menu"
-    | "close"
-    | "moon"
-    | "sun"
-    | "add"
-    | "check"
-    | "delete"
-    | "edit"
-    | "github"
-    | "info"
-    | "qr"
-    | "scan"
-    | "upload"
-    | "warning";
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 const navItems: NavItem[] = [
-  { href: "/", label: "Dashboard", icon: "home" },
-  { href: "/experiences", label: "Experiencias", icon: "ar" },
-  { href: "/experiences/new", label: "New", icon: "add" },
-  { href: "/analytics", label: "Analytics", icon: "view" },
-  { href: "/settings", label: "Configuración", icon: "settings" },
+  { href: "/", label: "Dashboard", icon: Home },
+  { href: "/experiences", label: "Experiencias", icon: Activity },
+  { href: "/experiences/new", label: "Nueva", icon: Plus },
+  { href: "/analytics", label: "Analytics", icon: TrendingUp },
+  {
+    href: "/configuraciones/panel-control",
+    label: "Configuración",
+    icon: Settings,
+  },
 ];
 
 export const Navbar: React.FC = () => {
@@ -47,78 +41,145 @@ export const Navbar: React.FC = () => {
 
   const toggleDarkMode = () => {
     setIsDark(!isDark);
-    // TODO: Implement actual dark mode toggle
     document.documentElement.classList.toggle("dark");
   };
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-white/10 backdrop-blur-lg">
+    <nav className="sticky top-0 z-50 bg-[#0F1C2E]/95 backdrop-blur-xl border-b-2 border-[#1a2942]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 transform group-hover:scale-110 transition-transform duration-300">
-                <svg
-                  viewBox="0 0 40 40"
-                  className="w-full h-full fill-current text-blue-600 dark:text-blue-400"
-                >
-                  {/* QR Code squares */}
-                  <rect x="2" y="2" width="6" height="6" rx="1" />
-                  <rect x="32" y="2" width="6" height="6" rx="1" />
-                  <rect x="2" y="32" width="6" height="6" rx="1" />
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative w-10 h-10 transform group-hover:scale-110 transition-transform duration-300">
+                {/* Outer glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#3DD8B6] to-[#00D4FF] rounded-lg blur-md opacity-50 group-hover:opacity-75 transition-opacity"></div>
+
+                {/* Logo SVG */}
+                <svg viewBox="0 0 40 40" className="relative w-full h-full">
+                  {/* QR Code corners */}
+                  <rect
+                    x="2"
+                    y="2"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    fill="#3DD8B6"
+                  />
+                  <rect
+                    x="31"
+                    y="2"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    fill="#00D4FF"
+                  />
+                  <rect
+                    x="2"
+                    y="31"
+                    width="7"
+                    height="7"
+                    rx="1.5"
+                    fill="#00D4FF"
+                  />
 
                   {/* Inner squares */}
-                  <rect x="4" y="4" width="2" height="2" />
-                  <rect x="34" y="4" width="2" height="2" />
-                  <rect x="4" y="34" width="2" height="2" />
+                  <rect
+                    x="4"
+                    y="4"
+                    width="3"
+                    height="3"
+                    rx="0.5"
+                    fill="#0F1C2E"
+                  />
+                  <rect
+                    x="33"
+                    y="4"
+                    width="3"
+                    height="3"
+                    rx="0.5"
+                    fill="#0F1C2E"
+                  />
+                  <rect
+                    x="4"
+                    y="33"
+                    width="3"
+                    height="3"
+                    rx="0.5"
+                    fill="#0F1C2E"
+                  />
 
                   {/* QR pattern dots */}
-                  <circle cx="14" cy="6" r="1" />
-                  <circle cx="18" cy="6" r="1" />
-                  <circle cx="22" cy="6" r="1" />
-                  <circle cx="26" cy="6" r="1" />
+                  <circle cx="14" cy="6" r="1.5" fill="#3DD8B6" />
+                  <circle cx="19" cy="6" r="1.5" fill="#3DD8B6" />
+                  <circle cx="24" cy="6" r="1.5" fill="#00D4FF" />
 
-                  <circle cx="6" cy="14" r="1" />
-                  <circle cx="6" cy="18" r="1" />
-                  <circle cx="6" cy="22" r="1" />
-                  <circle cx="6" cy="26" r="1" />
+                  <circle cx="6" cy="14" r="1.5" fill="#3DD8B6" />
+                  <circle cx="6" cy="19" r="1.5" fill="#3DD8B6" />
+                  <circle cx="6" cy="24" r="1.5" fill="#00D4FF" />
 
                   {/* AR cube in center */}
-                  <g transform="translate(16, 16)">
-                    <path d="M0,0 L4,-2 L8,0 L8,4 L4,6 L0,4 Z" opacity="0.8" />
-                    <path d="M0,0 L0,4 L4,6 L4,2 Z" opacity="0.6" />
-                    <path d="M4,2 L8,0 L8,4 L4,6 Z" opacity="0.9" />
+                  <g transform="translate(17, 17)">
+                    <path
+                      d="M0,0 L3,-2 L6,0 L6,3 L3,5 L0,3 Z"
+                      fill="#3DD8B6"
+                      opacity="0.9"
+                    />
+                    <path
+                      d="M0,0 L0,3 L3,5 L3,2 Z"
+                      fill="#00D4FF"
+                      opacity="0.7"
+                    />
+                    <path
+                      d="M3,2 L6,0 L6,3 L3,5 Z"
+                      fill="#3DD8B6"
+                      opacity="0.95"
+                    />
                   </g>
                 </svg>
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-brand-500 to-qr-500 bg-clip-text text-transparent">
-                QR AR
-              </span>
+              <div>
+                <span className="text-2xl font-bold bg-gradient-to-r from-[#3DD8B6] to-[#00D4FF] bg-clip-text text-transparent">
+                  QR AR
+                </span>
+              </div>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  pathname === item.href
-                    ? "bg-brand-500/20 text-brand-400 shadow-neon-sm"
-                    : "text-slate-300 hover:text-white hover:bg-white/10"
-                )}
-              >
-                <Icon name={item.icon} size="sm" />
-                <span>{item.label}</span>
-              </Link>
-            ))}
+          <div className="hidden md:flex items-center gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 relative group",
+                    isActive
+                      ? "bg-gradient-to-r from-[#3DD8B6]/20 to-[#00D4FF]/20 text-[#3DD8B6] border-2 border-[#3DD8B6]/50 shadow-lg shadow-[#3DD8B6]/20"
+                      : "text-gray-400 hover:text-white hover:bg-[#1a2942] border-2 border-transparent hover:border-[#1a2942]"
+                  )}
+                >
+                  {isActive && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#3DD8B6]/10 to-[#00D4FF]/10 rounded-xl blur-sm"></div>
+                  )}
+                  <Icon
+                    className={cn(
+                      "w-4 h-4 relative z-10 transition-transform group-hover:scale-110",
+                      isActive ? "text-[#3DD8B6]" : ""
+                    )}
+                  />
+                  <span className="relative z-10">{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-3">
             <DarkModeToggle
               isDark={isDark}
               onToggle={toggleDarkMode}
@@ -133,8 +194,13 @@ export const Navbar: React.FC = () => {
                 size="icon"
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label="Toggle menu"
+                className="text-gray-400 hover:text-white hover:bg-[#1a2942]"
               >
-                <Icon name={isOpen ? "close" : "menu"} size="md" />
+                {isOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
               </Button>
             </div>
           </div>
@@ -142,24 +208,44 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden border-t border-white/10">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center space-x-3 px-3 py-3 rounded-lg text-sm font-medium transition-all duration-200",
-                    pathname === item.href
-                      ? "bg-brand-500/20 text-brand-400"
-                      : "text-slate-300 hover:text-white hover:bg-white/10"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Icon name={item.icon} size="sm" />
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+          <div className="md:hidden border-t-2 border-[#1a2942] py-4 animate-in slide-in-from-top duration-200">
+            <div className="space-y-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200",
+                      isActive
+                        ? "bg-gradient-to-r from-[#3DD8B6]/20 to-[#00D4FF]/20 text-[#3DD8B6] border-2 border-[#3DD8B6]/50 shadow-lg shadow-[#3DD8B6]/20"
+                        : "text-gray-400 hover:text-white hover:bg-[#1a2942] border-2 border-transparent"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <div
+                      className={cn(
+                        "p-2 rounded-lg transition-all",
+                        isActive ? "bg-[#3DD8B6]/20" : "bg-[#1a2942]"
+                      )}
+                    >
+                      <Icon
+                        className={cn(
+                          "w-4 h-4",
+                          isActive ? "text-[#3DD8B6]" : "text-gray-400"
+                        )}
+                      />
+                    </div>
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <div className="ml-auto w-2 h-2 rounded-full bg-[#3DD8B6] animate-pulse"></div>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
