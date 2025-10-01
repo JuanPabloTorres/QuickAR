@@ -145,3 +145,4 @@ C:\Users\juanp\source\repos\QR-App\QrAr.Api\obj\Debug\net9.0\refint\QrAr.Api.dll
 C:\Users\juanp\source\repos\QR-App\QrAr.Api\obj\Debug\net9.0\QrAr.Api.pdb
 C:\Users\juanp\source\repos\QR-App\QrAr.Api\obj\Debug\net9.0\QrAr.Api.genruntimeconfig.cache
 C:\Users\juanp\source\repos\QR-App\QrAr.Api\obj\Debug\net9.0\ref\QrAr.Api.dll
+C:\Users\juanp\source\repos\QR-App\QrAr.Api\obj\Debug\net9.0\QrAr.Api.sourcelink.json
