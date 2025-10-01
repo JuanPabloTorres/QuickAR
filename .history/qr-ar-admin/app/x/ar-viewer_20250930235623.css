@@ -1,0 +1,517 @@
+/* AR Viewer Styles */
+.ar-viewer {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ar-viewer model-viewer {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer img,
+.ar-viewer video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.ar-image {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+/* AR Container */
+.ar-container {  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px); position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.ar-preview {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.ar-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+/* Fullscreen AR */
+.ar-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.ar-camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ar-model-container {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* Headers and Controls */
+.ar-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px;
+}
+
+.ar-header-no-events {
+  pointer-events: none;
+}
+
+.ar-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+}
+
+.ar-header-content-auto {
+  pointer-events: auto;
+}
+
+.ar-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.ar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px;
+}
+
+.ar-footer-no-events {
+  pointer-events: none;
+}
+
+.ar-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ar-footer-content-auto {
+  pointer-events: auto;
+}
+
+.ar-instructions {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  flex: 1;
+}
+
+/* Buttons */
+.ar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.ar-btn:active {
+  transform: translateY(0);
+}
+
+.ar-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.ar-btn-icon {
+  font-size: 16px;
+}
+
+.ar-btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.ar-btn-primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.ar-btn-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.ar-btn-purple:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.ar-btn-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.ar-btn-green:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.ar-btn-secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-btn-secondary:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.ar-btn-disabled {
+  background: rgba(107,114,128,0.5);
+  color: rgba(255,255,255,0.6);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ar-close-btn {
+  background: rgba(239,68,68,0.9);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.ar-close-btn:hover {
+  background: rgba(220,38,38,0.95);
+  transform: scale(1.05);
+}
+
+.ar-toggle-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.ar-toggle-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Overlay */
+.ar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.ar-overlay-no-events {
+  pointer-events: none;
+}
+
+.ar-content-wrapper {
+  max-width: 80%;
+  max-height: 60%;
+  background: rgba(255,255,255,0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.ar-overlay-image,
+.ar-overlay-video {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Error States */
+.ar-error {
+  text-align: center;
+  padding: 16px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+}
+
+.ar-error-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+/* Loading States */
+.ar-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  font-size: 14px;
+}
+
+.ar-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.ar-loading-content {
+  text-align: center;
+  color: white;
+}
+
+.ar-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: ar-spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes ar-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Navigation styles */
+.ar-navigation-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ar-navigation-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Message viewer */
+.ar-viewer-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer-unsupported {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ar-header-content,
+  .ar-footer-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .ar-title {
+    font-size: 16px;
+  }
+  
+  .ar-instructions {
+    font-size: 12px;
+  }
+  
+  .ar-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .ar-content-wrapper {
+    max-width: 90%;
+    max-height: 70%;
+    padding: 16px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .ar-btn,
+  .ar-loading-spinner,
+  .ar-navigation-button {
+    animation: none;
+    transition: none;
+  }
+  
+  .ar-btn:hover {
+    transform: none;
+  }
+}
+
+/* Focus management */
+.ar-fullscreen *:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Glass effect utility */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ar-viewer-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer-unsupported {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Navigation styles */
+.ar-navigation-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+.ar-navigation-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Loading spinner */
+.ar-loading-spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  height: 64px;
+  width: 64px;
+  border-top: 2px solid white;
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-left: 2px solid transparent;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,827 @@
+/* AR Viewer Styles */
+.ar-viewer {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ar-viewer model-viewer {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer img,
+.ar-viewer video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.ar-image {
+  max-width: 100%;
+  max-height: 400px;
+}
+
+/* AR Container */
+.ar-container {  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px); position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.ar-preview {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.ar-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+}
+
+/* Fullscreen AR */
+.ar-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.ar-camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ar-model-container {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* Headers and Controls */
+.ar-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px;
+}
+
+.ar-header-no-events {
+  pointer-events: none;
+}
+
+.ar-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+}
+
+.ar-header-content-auto {
+  pointer-events: auto;
+}
+
+.ar-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.ar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+  padding: 20px;
+}
+
+.ar-footer-no-events {
+  pointer-events: none;
+}
+
+.ar-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ar-footer-content-auto {
+  pointer-events: auto;
+}
+
+.ar-instructions {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  flex: 1;
+}
+
+/* Buttons */
+.ar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.ar-btn:active {
+  transform: translateY(0);
+}
+
+.ar-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.ar-btn-icon {
+  font-size: 16px;
+}
+
+.ar-btn-primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.ar-btn-primary:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.ar-btn-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+}
+
+.ar-btn-purple:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.ar-btn-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.ar-btn-green:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.ar-btn-secondary {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-btn-secondary:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+.ar-btn-disabled {
+  background: rgba(107,114,128,0.5);
+  color: rgba(255,255,255,0.6);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ar-close-btn {
+  background: rgba(239,68,68,0.9);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-close-btn:hover {
+  background: rgba(220,38,38,0.95);
+  transform: scale(1.05);
+}
+
+.ar-toggle-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-toggle-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Overlay */
+.ar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.ar-overlay-no-events {
+  pointer-events: none;
+}
+
+.ar-content-wrapper {
+  max-width: 80%;
+  max-height: 60%;
+  background: rgba(255,255,255,0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.ar-overlay-image,
+.ar-overlay-video {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Error States */
+.ar-error {
+  text-align: center;
+  padding: 16px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 12px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.ar-error-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+/* Loading States */
+.ar-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
+  font-size: 14px;
+}
+
+.ar-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.ar-loading-content {
+  text-align: center;
+  color: white;
+}
+
+.ar-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: ar-spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes ar-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Navigation styles */
+.ar-navigation-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ar-navigation-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Message viewer */
+.ar-viewer-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer-unsupported {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ar-header-content,
+  .ar-footer-content {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .ar-title {
+    font-size: 16px;
+  }
+  
+  .ar-instructions {
+    font-size: 12px;
+  }
+  
+  .ar-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  
+  .ar-content-wrapper {
+    max-width: 90%;
+    max-height: 70%;
+    padding: 16px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .ar-btn,
+  .ar-loading-spinner,
+  .ar-navigation-button {
+    animation: none;
+    transition: none;
+  }
+  
+  .ar-btn:hover {
+    transform: none;
+  }
+}
+
+/* Focus management */
+.ar-fullscreen *:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Glass effect utility */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ar-viewer-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);
+  height: 100%;
+  border-radius: 12px;
+}
+
+.ar-viewer-unsupported {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  height: 100%;
+  border-radius: 12px;
+}
+
+/* Navigation styles */
+.ar-navigation-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+}
+
+.ar-navigation-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Loading spinner */
+.ar-loading-spinner {
+  animation: spin 1s linear infinite;
+  border-radius: 50%;
+  height: 64px;
+  width: 64px;
+  border-top: 2px solid white;
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-left: 2px solid transparent;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   INTERACTIVE AR STYLES
+   ======================================== */
+
+/* Interactive content wrapper */
+.ar-interactive {
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+.ar-interactive:active {
+  cursor: grabbing;
+}
+
+/* Animation effects */
+.ar-bouncing {
+  animation: ar-bounce 0.6s ease-in-out;
+}
+
+@keyframes ar-bounce {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1) rotate(-5deg); }
+  50% { transform: scale(1.2) rotate(5deg); }
+  75% { transform: scale(1.1) rotate(-2deg); }
+}
+
+/* Particle effects */
+.ar-particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ar-particle {
+  position: absolute;
+  font-size: 24px;
+  animation: ar-particle-float 2s ease-out forwards;
+}
+
+.ar-particle-1 {
+  animation-delay: 0s;
+  left: -20px;
+  top: -20px;
+}
+
+.ar-particle-2 {
+  animation-delay: 0.2s;
+  left: 20px;
+  top: -20px;
+}
+
+.ar-particle-3 {
+  animation-delay: 0.4s;
+  left: -20px;
+  top: 20px;
+}
+
+.ar-particle-4 {
+  animation-delay: 0.6s;
+  left: 20px;
+  top: 20px;
+}
+
+@keyframes ar-particle-float {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(0.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(var(--random-x, 0), var(--random-y, -30px)) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--random-x, 0), var(--random-y, -60px)) scale(1.2);
+  }
+}
+
+/* Enhanced controls grid */
+.ar-controls-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fun button styles */
+.ar-fun-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  animation: ar-pulse 2s infinite;
+}
+
+.ar-fun-btn:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+  transform: scale(1.05);
+}
+
+@keyframes ar-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+  50% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+}
+
+.ar-reset-btn {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+}
+
+.ar-reset-btn:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+}
+
+/* Active/Inactive button states */
+.ar-active-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  animation: ar-active-pulse 1.5s infinite ease-in-out;
+}
+
+.ar-active-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+}
+
+.ar-inactive-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+}
+
+.ar-inactive-btn:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+}
+
+@keyframes ar-active-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    transform: scale(1.02);
+  }
+}
+
+/* Sound control buttons */
+.ar-sound-on {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  animation: ar-sound-wave 2s infinite ease-in-out;
+}
+
+.ar-sound-on:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+}
+
+.ar-sound-off {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+  opacity: 0.7;
+}
+
+.ar-sound-off:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
+  opacity: 1;
+}
+
+@keyframes ar-sound-wave {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+  }
+}
+
+/* Entry animations */
+.ar-content-wrapper {
+  animation: ar-fade-in-scale 1s ease-out;
+}
+
+@keyframes ar-fade-in-scale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Expanded instructions */
+.ar-instructions.ar-expanded {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 4px;
+  font-size: 11px;
+  margin: 8px 0;
+}
+
+.ar-instructions.ar-expanded > div {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* Status indicators */
+.ar-status-indicators {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.ar-status-item {
+  background: rgba(59, 130, 246, 0.2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 10px;
+  font-weight: 500;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* Touch feedback */
+.ar-interactive::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.ar-interactive:active::after {
+  width: 60px;
+  height: 60px;
+  opacity: 1;
+}
+
+/* Enhanced responsive design for interactive elements */
+@media (max-width: 768px) {
+  .ar-controls-grid {
+    gap: 6px;
+  }
+  
+  .ar-toggle-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .ar-instructions.ar-expanded {
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    font-size: 10px;
+  }
+  
+  .ar-status-indicators {
+    gap: 8px;
+  }
+  
+  .ar-status-item {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+  
+  .ar-particle {
+    font-size: 20px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ar-content-wrapper {
+    border: 3px solid #ffffff;
+    background: rgba(0, 0, 0, 0.8);
+  }
+  
+  .ar-status-item {
+    border: 2px solid #ffffff;
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Reduce motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .ar-bouncing,
+  .ar-particle,
+  .ar-fun-btn {
+    animation: none !important;
+  }
+  
+  .ar-interactive::after {
+    transition: none;
+  }
+}

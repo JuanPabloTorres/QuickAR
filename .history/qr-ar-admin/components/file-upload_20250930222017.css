@@ -1,0 +1,15 @@
+/* File Upload Component Styles */
+.file-upload-progress {
+  width: 100%;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 8px;
+  margin-top: 8px;
+}
+
+.file-upload-progress-bar {
+  background-color: #2563eb;
+  height: 8px;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
