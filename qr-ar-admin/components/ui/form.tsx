@@ -1,9 +1,9 @@
-import React from "react";
-import { UseFormRegister, FieldError } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import React from "react";
+import { FieldError, UseFormRegister } from "react-hook-form";
 
 interface FormFieldProps {
   label: string;
@@ -47,6 +47,7 @@ interface FormInputProps {
   type?: string;
   placeholder?: string;
   className?: string;
+  rules?: any;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -58,6 +59,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   type = "text",
   placeholder,
   className,
+  rules,
 }) => {
   return (
     <FormField
@@ -71,8 +73,16 @@ export const FormInput: React.FC<FormInputProps> = ({
         id={name}
         type={type}
         placeholder={placeholder}
-        {...register(name)}
-        className={error ? "border-red-500" : ""}
+        {...register(name, rules)}
+        className={cn(
+          "border-[#1a2942] bg-[#0F1C2E] text-[#3DD8B6] placeholder-gray-400",
+          "focus:border-[#3DD8B6] focus:ring-1 focus:ring-[#3DD8B6]/50",
+          "hover:border-[#3DD8B6]/70 transition-all duration-200",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+            : "",
+          className
+        )}
       />
     </FormField>
   );
@@ -112,7 +122,16 @@ export const FormTextarea: React.FC<FormTextareaProps> = ({
         placeholder={placeholder}
         rows={rows}
         {...register(name)}
-        className={error ? "border-red-500" : ""}
+        className={cn(
+          "border-[#1a2942] bg-[#0F1C2E] text-[#3DD8B6] placeholder-gray-400",
+          "focus:border-[#3DD8B6] focus:ring-1 focus:ring-[#3DD8B6]/50",
+          "hover:border-[#3DD8B6]/70 transition-all duration-200",
+          "resize-vertical min-h-[80px]",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+            : "",
+          className
+        )}
       />
     </FormField>
   );
@@ -153,15 +172,72 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         aria-label={label}
         aria-labelledby={`${name}-label`}
         {...register(name)}
-        className={error ? "border-red-500" : ""}
+        className={cn(
+          "border-[#1a2942] bg-[#0F1C2E] text-[#3DD8B6]",
+          "focus:border-[#3DD8B6] focus:ring-1 focus:ring-[#3DD8B6]/50",
+          "hover:border-[#3DD8B6]/70 transition-all duration-200",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/50"
+            : "",
+          className
+        )}
       >
-        <option value="">{placeholder}</option>
+        <option value="" className="bg-[#0F1C2E] text-gray-400">
+          {placeholder}
+        </option>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option
+            key={option.value}
+            value={option.value}
+            className="bg-[#0F1C2E] text-[#3DD8B6]"
+          >
             {option.label}
           </option>
         ))}
       </Select>
     </FormField>
+  );
+};
+
+interface FormCheckboxProps {
+  label: string;
+  name: string;
+  register: UseFormRegister<any>;
+  error?: FieldError;
+  className?: string;
+  description?: string;
+}
+
+export const FormCheckbox: React.FC<FormCheckboxProps> = ({
+  label,
+  name,
+  register,
+  error,
+  className,
+  description,
+}) => {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>
+      <input
+        id={name}
+        type="checkbox"
+        {...register(name)}
+        className={cn(
+          "w-5 h-5 rounded border-[#1a2942] bg-[#0F1C2E] text-[#3DD8B6]",
+          "focus:ring-2 focus:ring-[#3DD8B6]/50 focus:border-[#3DD8B6]",
+          "checked:bg-[#3DD8B6] checked:border-[#3DD8B6]",
+          error ? "border-red-500" : ""
+        )}
+      />
+      <div className="flex flex-col">
+        <label htmlFor={name} className="text-white text-sm cursor-pointer">
+          {label}
+        </label>
+        {description && (
+          <span className="text-gray-400 text-xs">{description}</span>
+        )}
+      </div>
+      {error && <p className="text-red-400 text-sm ml-2">{error.message}</p>}
+    </div>
   );
 };

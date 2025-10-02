@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import dynamic from "next/dynamic";
 import { apiClient } from "@/lib/api";
 import { ExperienceDto } from "@/types";
+import dynamic from "next/dynamic";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import "../ar-viewer.css";
 
 // Dynamic import of AR components with SSR disabled
@@ -22,11 +22,7 @@ export default function ARExperiencePage() {
 
   const slug = params.slug as string;
 
-  useEffect(() => {
-    loadExperience();
-  }, [slug]);
-
-  const loadExperience = async () => {
+  const loadExperience = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -49,7 +45,11 @@ export default function ARExperiencePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    loadExperience();
+  }, [loadExperience]);
 
   const trackEvent = async (eventType: string, additionalData?: string) => {
     if (!experience) return;

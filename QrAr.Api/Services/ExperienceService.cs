@@ -27,6 +27,7 @@ public class ExperienceService : IExperienceService
                 .ToListAsync();
 
             var dtos = experiences.Select(e => e.ToDto());
+
             return ApiResponse<IEnumerable<ExperienceDto>>.SuccessResult(dtos);
         }
         catch (Exception ex)
@@ -91,7 +92,7 @@ public class ExperienceService : IExperienceService
             }
 
             var slug = GenerateSlug(dto.Slug ?? dto.Title);
-            
+
             // Check if slug is unique
             if (await _context.Experiences.AnyAsync(e => e.Slug == slug))
             {
@@ -132,9 +133,13 @@ public class ExperienceService : IExperienceService
     {
         try
         {
+            _logger.LogInformation("Starting update for experience: {Id}", id);
+
             var validationErrors = ValidateExperienceUpdateDto(dto);
+
             if (validationErrors.Any())
             {
+                _logger.LogWarning("Validation errors for experience {Id}: {Errors}", id, string.Join(", ", validationErrors));
                 return ApiResponse<ExperienceDto>.ErrorResult(validationErrors);
             }
 
@@ -144,11 +149,14 @@ public class ExperienceService : IExperienceService
 
             if (experience == null)
             {
+                _logger.LogWarning("Experience not found: {Id}", id);
                 return ApiResponse<ExperienceDto>.ErrorResult("Experience not found");
             }
 
+            _logger.LogInformation("Found experience: {Title}, Assets count: {Count}", experience.Title, experience.Assets.Count);
+
             var slug = GenerateSlug(dto.Slug ?? dto.Title);
-            
+
             // Check if slug is unique (excluding current experience)
             if (await _context.Experiences.AnyAsync(e => e.Slug == slug && e.Id != id))
             {
@@ -160,29 +168,54 @@ public class ExperienceService : IExperienceService
             experience.Description = dto.Description;
             experience.IsActive = dto.IsActive;
 
-            // Update assets
+            // Update assets - Simplified approach
             if (dto.Assets != null)
             {
-                // Remove existing assets
-                _context.Assets.RemoveRange(experience.Assets);
-                experience.Assets.Clear();
+                _logger.LogInformation("Updating assets. Incoming assets count: {Count}", dto.Assets.Count());
+
+                // Delete all existing assets for this experience
+                var existingAssets = await _context.Assets
+                    .Where(a => a.ExperienceId == experience.Id)
+                    .ToListAsync();
+
+                _context.Assets.RemoveRange(existingAssets);
+                await _context.SaveChangesAsync(); // Save the deletions first
 
                 // Add new assets
+                var newAssets = new List<Asset>();
                 foreach (var assetDto in dto.Assets)
                 {
-                    var asset = assetDto.ToEntity(experience.Id);
-                    experience.Assets.Add(asset);
+                    _logger.LogInformation("Processing asset: {Name}, Kind: {Kind}", assetDto.Name, assetDto.Kind);
+                    try
+                    {
+                        var asset = assetDto.ToEntity(experience.Id);
+                        newAssets.Add(asset);
+                        _logger.LogInformation("Successfully processed asset: {Name}", assetDto.Name);
+                    }
+                    catch (Exception assetEx)
+                    {
+                        _logger.LogError(assetEx, "Error creating asset: {Name}, Kind: {Kind}", assetDto.Name, assetDto.Kind);
+                        throw;
+                    }
                 }
+
+                _context.Assets.AddRange(newAssets);
             }
 
+            _logger.LogInformation("Attempting to save changes...");
             await _context.SaveChangesAsync();
+            _logger.LogInformation("Successfully saved changes for experience: {Id}", id);
 
-            _logger.LogInformation("Updated experience: {Id}", id);
             return ApiResponse<ExperienceDto>.SuccessResult(experience.ToDto(), "Experience updated successfully");
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogError(ex, "Concurrency conflict updating experience: {Id}. The experience may have been modified by another user.", id);
+            return ApiResponse<ExperienceDto>.ErrorResult("The experience was modified by another user. Please refresh and try again.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error updating experience: {Id}", id);
+            _logger.LogError(ex, "Error updating experience: {Id}, Message: {Message}", id, ex.Message);
             return ApiResponse<ExperienceDto>.ErrorResult("Error updating experience");
         }
     }
@@ -192,7 +225,7 @@ public class ExperienceService : IExperienceService
         try
         {
             var experience = await _context.Experiences.FindAsync(id);
-            
+
             if (experience == null)
             {
                 return ApiResponse<bool>.ErrorResult("Experience not found");
@@ -216,7 +249,7 @@ public class ExperienceService : IExperienceService
         try
         {
             var experience = await _context.Experiences.FindAsync(id);
-            
+
             if (experience == null)
             {
                 return ApiResponse<bool>.ErrorResult("Experience not found");
@@ -242,16 +275,16 @@ public class ExperienceService : IExperienceService
 
         // Convert to lowercase and replace spaces with hyphens
         var slug = input.ToLowerInvariant().Replace(" ", "-");
-        
+
         // Remove special characters, keep only letters, numbers, and hyphens
         slug = Regex.Replace(slug, @"[^a-z0-9\-]", "");
-        
+
         // Remove multiple consecutive hyphens
         slug = Regex.Replace(slug, @"-+", "-");
-        
+
         // Remove leading and trailing hyphens
         slug = slug.Trim('-');
-        
+
         return slug;
     }
 
@@ -259,13 +292,13 @@ public class ExperienceService : IExperienceService
     {
         var counter = 1;
         var uniqueSlug = $"{baseSlug}-{counter}";
-        
+
         while (await _context.Experiences.AnyAsync(e => e.Slug == uniqueSlug))
         {
             counter++;
             uniqueSlug = $"{baseSlug}-{counter}";
         }
-        
+
         return uniqueSlug;
     }
 

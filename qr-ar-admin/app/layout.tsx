@@ -1,13 +1,13 @@
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "QR AR Admin",
+  title: "QR AR",
   description:
     "Panel de administración para experiencias de realidad aumentada con códigos QR",
 };

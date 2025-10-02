@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { logAssetInfo, normalizeAssetUrl } from "@/lib/assets";
 import { AssetDto } from "@/types";
 import dynamic from "next/dynamic";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 // ========================================
 // CONTENT ROUTER SYSTEM
@@ -109,11 +110,12 @@ interface TouchGestures {
 
 // Simple AR Camera Component
 const SimpleARViewer: React.FC<{
+  asset: AssetDto;
   assetUrl: string;
   assetName: string;
   onClose: () => void;
   onTrackEvent: (event: string, data?: string) => void;
-}> = ({ assetUrl, assetName, onClose, onTrackEvent }) => {
+}> = ({ asset, assetUrl, assetName, onClose, onTrackEvent }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -137,6 +139,7 @@ const SimpleARViewer: React.FC<{
   const [hasEntryAnimation, setHasEntryAnimation] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [simpleModelViewerLoaded, setSimpleModelViewerLoaded] = useState(false);
 
   // Audio context para efectos de sonido
   const audioContext = useRef<AudioContext | null>(null);
@@ -158,6 +161,19 @@ const SimpleARViewer: React.FC<{
       document.removeEventListener("click", initAudio);
     };
   }, []);
+
+  // Load model-viewer for 3D models in AR
+  useEffect(() => {
+    if (asset.kind === "model3d" && !simpleModelViewerLoaded) {
+      import("@google/model-viewer")
+        .then(() => {
+          setSimpleModelViewerLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Failed to load model-viewer in AR:", error);
+        });
+    }
+  }, [asset.kind, simpleModelViewerLoaded]);
 
   // Función para generar tonos de sonido
   const playTone = (
@@ -525,14 +541,72 @@ const SimpleARViewer: React.FC<{
             onTouchEnd={handleTouchEnd}
             onDoubleClick={triggerAnimation}
           >
-            <img
-              src={assetUrl}
-              alt={assetName}
-              className="ar-overlay-image"
-              onLoad={() => onTrackEvent("overlay_loaded", assetName)}
-              onError={() => onTrackEvent("overlay_error", assetName)}
-              draggable={false}
-            />
+            {asset.kind === "message" ? (
+              <div className="ar-message-content">
+                <div className="ar-message-bubble">
+                  <div className="text-2xl mb-3">💬</div>
+                  <p className="text-white text-center font-medium text-lg leading-relaxed">
+                    {asset.text || assetName}
+                  </p>
+                </div>
+              </div>
+            ) : asset.kind === "model3d" ? (
+              <div className="ar-model-overlay">
+                {simpleModelViewerLoaded && assetUrl ? (
+                  React.createElement("model-viewer", {
+                    src: assetUrl,
+                    alt: assetName,
+                    "camera-controls": true,
+                    "auto-rotate": true,
+                    ar: true,
+                    "ar-modes": "webxr scene-viewer quick-look",
+                    "environment-image": "neutral",
+                    "shadow-intensity": "1",
+                    className: "ar-overlay-model",
+                    onLoad: () => {
+                      console.log(
+                        "AR Model-viewer loaded successfully:",
+                        assetName
+                      );
+                      onTrackEvent("ar_model_loaded", assetName);
+                    },
+                    onError: (e: any) => {
+                      console.error(
+                        "AR Model-viewer failed to load:",
+                        assetName,
+                        e
+                      );
+                      onTrackEvent("ar_model_error", assetName);
+                    },
+                  })
+                ) : (
+                  <div className="ar-model-placeholder">
+                    <div className="text-4xl mb-2">🎲</div>
+                    <p className="text-white text-center font-medium">
+                      {!simpleModelViewerLoaded
+                        ? "Inicializando visor 3D..."
+                        : !assetUrl
+                        ? "URL del modelo no disponible"
+                        : "Cargando modelo..."}
+                    </p>
+                    {process.env.NODE_ENV === "development" && assetUrl && (
+                      <p className="text-xs text-white opacity-50 mt-1">
+                        AR URL: {assetUrl}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <img
+                src={assetUrl}
+                alt={assetName}
+                className="ar-overlay-image"
+                onLoad={() => onTrackEvent("overlay_loaded", assetName)}
+                onError={() => onTrackEvent("overlay_error", assetName)}
+                draggable={false}
+              />
+            )}
             <p className="text-white text-center mt-2 font-semibold">
               {assetName}
             </p>
@@ -650,21 +724,20 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
   const [isChecking, setIsChecking] = useState(true);
   const [showAR, setShowAR] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
+  const [modelViewerLoaded, setModelViewerLoaded] = useState(false);
 
   const assetUrl = React.useMemo(() => {
-    if (!asset.url) return "";
-    if (asset.url.startsWith("http")) return asset.url;
+    logAssetInfo(asset, "ARViewer");
+    const normalizedUrl = normalizeAssetUrl(asset);
 
-    const baseUrl =
-      process.env.NODE_ENV === "production"
-        ? process.env.NEXT_PUBLIC_API_URL || ""
-        : "http://localhost:5000";
+    if (!normalizedUrl) {
+      console.warn("No se pudo normalizar URL para asset:", asset.name);
+      return "";
+    }
 
-    return `${baseUrl}${
-      asset.url.startsWith("/") ? asset.url : `/${asset.url}`
-    }`;
-  }, [asset.url]);
-
+    console.log("URL final para", asset.name, ":", normalizedUrl);
+    return normalizedUrl;
+  }, [asset]);
   useEffect(() => {
     const checkCapabilities = async () => {
       try {
@@ -713,6 +786,21 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
     checkCapabilities();
   }, []);
 
+  // Load model-viewer for 3D models
+  useEffect(() => {
+    if (asset.kind === "model3d" && !modelViewerLoaded) {
+      console.log("Loading model-viewer for 3D asset:", asset.name);
+      import("@google/model-viewer")
+        .then(() => {
+          console.log("Model-viewer library loaded successfully");
+          setModelViewerLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Failed to load model-viewer:", error);
+        });
+    }
+  }, [asset.kind, modelViewerLoaded, asset.name]);
+
   const handleStartAR = useCallback(() => {
     if (!userInteracted) {
       setUserInteracted(true);
@@ -720,16 +808,12 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
 
     onTrackEvent("ar_start_attempt", asset.id);
 
-    if (asset.kind === "model3d") {
-      // For 3D models, redirect to model viewer or show message
-      onTrackEvent("ar_model3d_start", asset.id);
-      alert(
-        "Los modelos 3D requieren un visor especializado. Esta función estará disponible próximamente."
-      );
-      return;
-    }
-
-    if (asset.kind === "image" || asset.kind === "video") {
+    if (
+      asset.kind === "image" ||
+      asset.kind === "video" ||
+      asset.kind === "message" ||
+      asset.kind === "model3d"
+    ) {
       setShowAR(true);
     }
   }, [asset, onTrackEvent, userInteracted]);
@@ -766,12 +850,69 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
         );
 
       case "model3d":
+        console.log("Rendering 3D model:", {
+          assetName: asset.name,
+          assetUrl,
+          rawUrl: asset.url,
+          mimeType: asset.mimeType,
+          modelViewerLoaded,
+        });
+
         return (
-          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg flex items-center justify-center">
-            <div className="text-center text-white">
-              <div className="text-4xl mb-4">🎲</div>
-              <p className="text-sm opacity-75">Modelo 3D</p>
-              <p className="text-xs opacity-50 mt-1">{asset.name}</p>
+          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg overflow-hidden">
+            {modelViewerLoaded && assetUrl ? (
+              React.createElement("model-viewer", {
+                src: assetUrl,
+                alt: asset.name,
+                "camera-controls": true,
+                "auto-rotate": true,
+                ar: true,
+                "ar-modes": "webxr scene-viewer quick-look",
+                "environment-image": "neutral",
+                "shadow-intensity": "1",
+                className: "w-full h-full ar-model-viewer",
+                onLoad: () => {
+                  console.log("Model-viewer loaded successfully:", asset.name);
+                },
+                onError: (e: any) => {
+                  console.error("Model-viewer failed to load:", asset.name, e);
+                },
+              })
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="text-center text-white">
+                  <div className="text-4xl mb-4">🎲</div>
+                  <p className="text-sm opacity-75">
+                    {!modelViewerLoaded
+                      ? "Inicializando visor 3D..."
+                      : !assetUrl
+                      ? "URL del modelo no disponible"
+                      : "Cargando modelo 3D..."}
+                  </p>
+                  <p className="text-xs opacity-50 mt-1">{asset.name}</p>
+                  {process.env.NODE_ENV === "development" && (
+                    <p className="text-xs opacity-30 mt-1">
+                      URL: {assetUrl || "No URL"}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case "message":
+        return (
+          <div className="w-full h-full bg-gradient-to-br from-blue-800 to-purple-900 rounded-lg flex items-center justify-center p-6">
+            <div className="text-center text-white max-w-md">
+              <div className="text-4xl mb-4">💬</div>
+              <p className="text-sm opacity-75 mb-3">Mensaje de Texto</p>
+              {asset.text && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-sm">
+                  <p className="whitespace-pre-wrap">{asset.text}</p>
+                </div>
+              )}
+              <p className="text-xs opacity-50 mt-2">{asset.name}</p>
             </div>
           </div>
         );
@@ -848,6 +989,12 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
             text: "Ver Video AR",
             className: "ar-btn-green",
           };
+        case "message":
+          return {
+            icon: "💬",
+            text: "Ver Mensaje AR",
+            className: "ar-btn-blue",
+          };
         default:
           return null;
       }
@@ -868,9 +1015,16 @@ const ARViewer: React.FC<ARViewerProps> = ({ asset, onTrackEvent }) => {
     );
   };
 
-  if (showAR && (asset.kind === "image" || asset.kind === "video")) {
+  if (
+    showAR &&
+    (asset.kind === "image" ||
+      asset.kind === "video" ||
+      asset.kind === "message" ||
+      asset.kind === "model3d")
+  ) {
     return (
       <SimpleARViewer
+        asset={asset}
         assetUrl={assetUrl}
         assetName={asset.name}
         onClose={handleStopAR}

@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using QrAr.Api.Data;
 using QrAr.Api.DTOs;
 using QrAr.Api.Services;
@@ -7,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ??
                      "Data Source=qr_ar.db"));
 
 // Register services
@@ -21,7 +23,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                "https://localhost:3000", 
+                "https://localhost:3000",
                 "http://localhost:3000",
                 "http://192.168.0.5:3000",
                 "https://192.168.0.5:3000"
@@ -29,6 +31,13 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
+    });
+
+    options.AddPolicy("AllowSwagger", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -49,20 +58,39 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "QR AR API v1");
     });
+    app.UseCors("AllowSwagger"); // More permissive for development
+}
+else
+{
+    app.UseCors("AllowFrontend"); // Restrictive for production
 }
 
-app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
+// Commented out for development to allow HTTP traffic
+// app.UseHttpsRedirection();
+
+// First add default static files middleware for wwwroot
+app.UseStaticFiles();
+
+// Configure specialized static file serving with proper MIME types for 3D assets
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".glb"] = "model/gltf-binary";
+provider.Mappings[".gltf"] = "model/gltf+json";
+provider.Mappings[".usdz"] = "model/vnd.usdz+zip";
+
 app.UseStaticFiles(new StaticFileOptions
 {
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads",
+    ContentTypeProvider = provider,
     OnPrepareResponse = ctx =>
     {
         // Add CORS headers to static files
-        ctx.Context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Add("Access-Control-Allow-Methods", "GET");
-        ctx.Context.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+        ctx.Context.Response.Headers["Access-Control-Allow-Origin"] = "*";
+        ctx.Context.Response.Headers["Access-Control-Allow-Methods"] = "GET";
+        ctx.Context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type";
     }
-}); // For serving uploaded files
+});
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())

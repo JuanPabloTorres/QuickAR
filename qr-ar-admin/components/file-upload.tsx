@@ -29,8 +29,26 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 }) => {
   const [error, setError] = useState<string | null>(null);
 
-  const allowedTypes = ASSET_MIME_TYPES[assetKind];
-  const maxSize = ASSET_MAX_SIZES[assetKind];
+  // Validate assetKind and provide fallbacks
+  const allowedTypes = ASSET_MIME_TYPES[assetKind] || [];
+  const maxSize = ASSET_MAX_SIZES[assetKind] || 10 * 1024 * 1024; // 10MB default
+
+  // Early validation for message assets (no file upload needed)
+  if (assetKind === "message") {
+    console.warn("FileUpload component should not be used for message assets");
+    return (
+      <div
+        className={cn(
+          "p-4 border border-orange-200 bg-orange-50 rounded-lg",
+          className
+        )}
+      >
+        <p className="text-orange-700">
+          Los assets de mensaje no requieren carga de archivos.
+        </p>
+      </div>
+    );
+  }
 
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: any[]) => {
@@ -77,7 +95,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: allowedTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {}),
+    accept:
+      allowedTypes.length > 0
+        ? allowedTypes.reduce((acc, type) => ({ ...acc, [type]: [] }), {})
+        : undefined,
     maxSize,
     multiple: false,
     disabled,

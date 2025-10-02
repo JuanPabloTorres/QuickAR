@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import { NormalizedContent, DeviceMotion } from "../ARViewer";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { DeviceMotion, NormalizedContent } from "../ARViewer";
 
 interface Model3DRendererProps {
   content: NormalizedContent;
@@ -121,65 +121,80 @@ const Model3DRenderer: React.FC<Model3DRendererProps> = ({
     };
   }, [webglCapabilities, content, onTrackEvent]);
 
-  // Load native browser 3D viewer
+  // Load native browser 3D viewer with actual model-viewer
   const loadNativeViewer = async () => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !content.url) return;
 
-    // Create a basic 3D container with fallback
-    const modelContainer = document.createElement("div");
-    modelContainer.style.width = "100%";
-    modelContainer.style.height = "100%";
-    modelContainer.style.position = "relative";
-    modelContainer.style.backgroundColor = "rgba(0,0,0,0.1)";
-    modelContainer.style.borderRadius = "8px";
-    modelContainer.style.display = "flex";
-    modelContainer.style.alignItems = "center";
-    modelContainer.style.justifyContent = "center";
+    try {
+      console.log(
+        "Loading model-viewer for:",
+        content.name,
+        "URL:",
+        content.url
+      );
 
-    // Create model preview
-    const preview = document.createElement("div");
-    preview.innerHTML = `
-      <div style="text-align: center; color: #666;">
-        <div style="font-size: 48px; margin-bottom: 16px;">📦</div>
-        <h3 style="margin: 0 0 8px 0; font-size: 18px;">Modelo 3D</h3>
-        <p style="margin: 0; font-size: 14px;">${content.name}</p>
-        <p style="margin: 8px 0 0 0; font-size: 12px; opacity: 0.7;">
-          Formato: ${content.ext?.toUpperCase() || "Desconocido"}
-        </p>
-        ${
-          content.url
-            ? `
-          <a 
-            href="${content.url}" 
-            target="_blank" 
-            style="
-              display: inline-block; 
-              margin-top: 16px; 
-              padding: 8px 16px; 
-              background: #007ACC; 
-              color: white; 
-              text-decoration: none; 
-              border-radius: 4px; 
-              font-size: 14px;
-            "
-          >
-            Ver Modelo
-          </a>
-        `
-            : ""
+      // Dynamically import model-viewer
+      await import("@google/model-viewer");
+      console.log("Model-viewer library loaded successfully");
+
+      // Create model-viewer element
+      const modelViewer = document.createElement("model-viewer");
+
+      // Set attributes
+      modelViewer.setAttribute("src", content.url);
+      modelViewer.setAttribute("alt", content.name);
+      modelViewer.setAttribute("camera-controls", "true");
+      modelViewer.setAttribute("auto-rotate", "true");
+      modelViewer.setAttribute("environment-image", "neutral");
+      modelViewer.setAttribute("shadow-intensity", "1");
+
+      // Set styles
+      modelViewer.style.width = "100%";
+      modelViewer.style.height = "100%";
+      modelViewer.style.minHeight = "300px";
+      modelViewer.style.backgroundColor = "rgba(0,0,0,0.05)";
+      modelViewer.style.borderRadius = "8px";
+
+      // Add loading and error handlers
+      modelViewer.addEventListener("load", () => {
+        console.log("3D Model loaded successfully:", content.name);
+        setIsLoading(false);
+        setIsModelLoaded(true);
+        onTrackEvent("model3d_loaded", content.name);
+      });
+
+      modelViewer.addEventListener("error", (e) => {
+        console.error("3D Model failed to load:", content.name, e);
+        setError(`Error al cargar el modelo 3D: ${content.name}`);
+        setIsLoading(false);
+        onTrackEvent("model3d_error", `${content.name}_load_failed`);
+      });
+
+      // Add progress handler
+      modelViewer.addEventListener("progress", (e: any) => {
+        if (e.detail && e.detail.totalProgress < 1) {
+          console.log(
+            `Loading progress: ${Math.round(e.detail.totalProgress * 100)}%`
+          );
         }
-      </div>
-    `;
+      });
 
-    modelContainer.appendChild(preview);
+      // Clear container and add model viewer
+      containerRef.current.innerHTML = "";
+      containerRef.current.appendChild(modelViewer);
+      viewerRef.current = modelViewer;
 
-    // Clear container and add viewer
-    containerRef.current.innerHTML = "";
-    containerRef.current.appendChild(modelContainer);
-    viewerRef.current = { container: modelContainer };
-
-    setIsModelLoaded(true);
-    setIsLoading(false);
+      console.log("Model-viewer element added to container");
+    } catch (err) {
+      console.error("Error setting up model viewer:", err);
+      setError(
+        `Error al cargar el visor 3D: ${
+          err instanceof Error ? err.message : "Error desconocido"
+        }`
+      );
+      setIsLoading(false);
+      onTrackEvent("model3d_viewer_error", content.name);
+    }
   };
 
   // Load Three.js viewer for OBJ files
