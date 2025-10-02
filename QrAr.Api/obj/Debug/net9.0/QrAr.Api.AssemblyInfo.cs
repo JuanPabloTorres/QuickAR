@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QrAr.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1c5992c2046cc691d0bb7dee82b3cecb4abb977")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce0db19c22d39fddc5bea1d3d59838d620e6e3fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("QrAr.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QrAr.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
