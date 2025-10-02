@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using QrAr.Api.Data;
 using QrAr.Api.DTOs;
 using QrAr.Api.Services;
@@ -65,8 +67,22 @@ else
 
 // Commented out for development to allow HTTP traffic
 // app.UseHttpsRedirection();
+
+// First add default static files middleware for wwwroot
+app.UseStaticFiles();
+
+// Configure specialized static file serving with proper MIME types for 3D assets
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".glb"] = "model/gltf-binary";
+provider.Mappings[".gltf"] = "model/gltf+json";
+provider.Mappings[".usdz"] = "model/vnd.usdz+zip";
+
 app.UseStaticFiles(new StaticFileOptions
 {
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")),
+    RequestPath = "/uploads",
+    ContentTypeProvider = provider,
     OnPrepareResponse = ctx =>
     {
         // Add CORS headers to static files
@@ -74,7 +90,7 @@ app.UseStaticFiles(new StaticFileOptions
         ctx.Context.Response.Headers["Access-Control-Allow-Methods"] = "GET";
         ctx.Context.Response.Headers["Access-Control-Allow-Headers"] = "Content-Type";
     }
-}); // For serving uploaded files
+});
 
 // Ensure database is created
 using (var scope = app.Services.CreateScope())
