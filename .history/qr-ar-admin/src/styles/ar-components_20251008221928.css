@@ -1,0 +1,143 @@
+/* AR Components Styles - Estilos específicos para componentes AR */
+
+/* AssetRenderer Styles */
+.progress-bar {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+}
+
+.progress-bar .update-bar {
+  background: #3b82f6;
+  width: 0%;
+  height: inherit;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+/* Model Viewer Custom Styles */
+model-viewer {
+  --poster-color: transparent;
+}
+
+model-viewer::part(default-ar-button) {
+  display: none;
+}
+
+/* ArOverlay Styles */
+.ar-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ar-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+/* Animaciones AR */
+@keyframes ar-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.ar-loading-dot {
+  animation: ar-pulse 1.5s ease-in-out infinite;
+}
+
+.ar-loading-dot:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.ar-loading-dot:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* Estados AR */
+.ar-active {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.ar-error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.ar-loading {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ar-overlay {
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .progress-bar {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar .update-bar,
+  .ar-progress-fill {
+    transition: none;
+  }
+  
+  .ar-loading-dot {
+    animation: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .ar-progress-bar {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Custom utilities for AR components */
+.ar-aspect-ratio {
+  aspect-ratio: 16 / 9;
+}
+
+@supports not (aspect-ratio: 16 / 9) {
+  .ar-aspect-ratio {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+  }
+  
+  .ar-aspect-ratio > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}

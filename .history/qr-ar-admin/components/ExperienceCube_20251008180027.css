@@ -1,0 +1,32 @@
+/* AR Experience Cube Styles */
+
+.experience-cube-ar {
+  --poster-color: transparent;
+}
+
+.experience-cube-ar model-viewer {
+  --poster-color: transparent;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.model-viewer-ar {
+  --poster-color: transparent;
+}
+
+.ar-controls {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ar-status-indicator {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Ensure model-viewer renders properly within flex containers */
+model-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

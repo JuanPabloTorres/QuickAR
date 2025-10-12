@@ -1,0 +1,150 @@
+/* 3D Neutral Experience Cube - Physical dimensional appearance like AR examples */
+
+.experience-cube-ar {
+  --poster-color: transparent;
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+  overflow: visible;
+  background: transparent;
+}
+
+.experience-cube-ar model-viewer {
+  --poster-color: transparent;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+.model-viewer-ar {
+  --poster-color: transparent;
+}
+
+/* 3D Cube Wireframe - Neutral dimensional borders */
+.ar-cube-wireframe {
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+  z-index: 10;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* NO animations - Static dimensional look */
+.ar-cube-wireframe:hover {
+  border-color: rgba(0, 0, 0, 0.45);
+}
+
+/* Minimal corner brackets - Neutral */
+.ar-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-style: solid;
+  border-width: 0;
+  border-color: rgba(0, 0, 0, 0.4);
+  z-index: 15;
+}
+
+.ar-corner-tl {
+  top: -2px;
+  left: -2px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.ar-corner-tr {
+  top: -2px;
+  right: -2px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.ar-corner-bl {
+  bottom: -2px;
+  left: -2px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.ar-corner-br {
+  bottom: -2px;
+  right: -2px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* 3D Dimensional Faces - Static depth effect */
+.ar-cube-face {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.ar-cube-face-front {
+  transform: translateZ(6px);
+  opacity: 0.8;
+}
+
+.ar-cube-face-back {
+  transform: translateZ(-6px);
+  opacity: 0.3;
+}
+
+/* Inner grid for depth perception - Static */
+.ar-inner-grid {
+  position: absolute;
+  inset: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Subtle holographic depth - No animation */
+.ar-hologram {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+/* User interaction responsive only - NO auto animations */
+.experience-cube-ar:hover .ar-cube-wireframe {
+  border-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* Touch/drag responsive corners */
+.ar-corner {
+  transition: border-color 0.2s ease;
+}
+
+.experience-cube-ar:hover .ar-corner {
+  border-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Ensure model-viewer renders properly */
+model-viewer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}

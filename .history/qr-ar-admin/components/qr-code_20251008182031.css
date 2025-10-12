@@ -1,0 +1,56 @@
+/* QR Code Styles */
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(61, 216, 182, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+  border: 2px solid rgba(61, 216, 182, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.qr-code-wrapper {
+  position: relative;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.qr-code-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #3DD8B6, #00D4FF, #3DD8B6);
+  border-radius: 10px;
+  z-index: -1;
+  animation: qr-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes qr-glow {
+  0% {
+    box-shadow: 0 0 20px rgba(61, 216, 182, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+  }
+}
+
+.qr-title {
+  color: #3DD8B6;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.qr-description {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+  text-align: center;
+  line-height: 1.4;
+}

@@ -1,0 +1,70 @@
+/* AR Asset Renderer Styles */
+
+.asset-renderer-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgb(248, 250, 252);
+  border: 1px solid rgb(226, 232, 240);
+}
+
+.asset-renderer-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.asset-renderer-image,
+.asset-renderer-video {
+  position: relative;
+}
+
+.asset-renderer-image img,
+.asset-renderer-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.asset-renderer-model3d {
+  position: relative;
+}
+
+.asset-renderer-model3d model-viewer {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  --poster-color: transparent;
+}
+
+.asset-renderer-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(243, 244, 246);
+}
+
+.asset-renderer-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid rgb(209, 213, 219);
+  border-top-color: rgb(75, 85, 99);
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

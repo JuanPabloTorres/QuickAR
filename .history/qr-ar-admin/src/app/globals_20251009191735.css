@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.0%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gradient-to-br from-slate-950 via-gray-950 to-slate-900 text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* Glass morphism effect for cards */
+  .glass {
+    @apply bg-gray-900/40 backdrop-blur-md border border-gray-600/30 shadow-2xl shadow-black/20;
+    position: relative;
+  }
+  
+  .glass::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl border border-gray-400/20 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none;
+  }
+
+  /* AR specific styles */
+  .ar-container {
+    @apply min-h-screen relative overflow-hidden;
+  }
+
+  .ar-scene {
+    @apply relative z-10;
+  }
+
+  .ar-navigation-button {
+    @apply px-4 py-2 bg-gray-900/80 backdrop-blur-md border border-gray-600/50 rounded-lg text-white hover:bg-gray-800/80 hover:border-gray-500/70 transition-all duration-200;
+  }
+
+  /* Asset rendering styles */
+  .asset-image,
+  .asset-video,
+  .asset-model {
+    @apply rounded-lg shadow-lg;
+  }
+
+  .asset-text {
+    @apply p-6 bg-gray-900/60 backdrop-blur-md border border-gray-600/40 rounded-lg;
+  }
+
+  /* File upload progress bar */
+  .progress-bar {
+    @apply bg-gray-700 rounded-full h-2 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply bg-blue-600 h-full transition-all duration-300;
+  }
+
+  /* Custom progress animation */
+  [data-progress] {
+    width: calc(var(--progress, 0) * 1%);
+  }
+
+  /* Loading animations */
+  @keyframes ar-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  @keyframes ar-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-ar-pulse {
+    animation: ar-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-ar-float {
+    animation: ar-float 3s ease-in-out infinite;
+  }
+
+  /* Experience cube 3D effects */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .ar-container {
+      @apply p-2;
+    }
+    
+    .glass {
+      @apply mx-2;
+    }
+
+    .ar-navigation-button {
+      @apply text-sm px-3 py-2;
+    }
+  }
+
+  /* Desktop hover effects */
+  @media (hover: hover) {
+    .glass:hover {
+      @apply border-gray-500/40 shadow-xl shadow-black/30;
+    }
+
+    .ar-navigation-button:hover {
+      @apply shadow-lg shadow-blue-500/20;
+    }
+  }
+
+  /* Dark mode specific adjustments */
+  @media (prefers-color-scheme: dark) {
+    .glass {
+      @apply border-gray-500/20;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .glass {
+      @apply border-gray-400/60 bg-gray-900/80;
+    }
+    
+    .ar-navigation-button {
+      @apply border-gray-400/80;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-ar-pulse,
+    .animate-ar-float {
+      animation: none;
+    }
+    
+    * {
+      @apply transition-none;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .ar-container,
+    .ar-navigation-button {
+      @apply hidden;
+    }
+    
+    .glass {
+      @apply bg-white border-gray-400 text-black;
+    }
+  }
+}

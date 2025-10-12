@@ -135,12 +135,81 @@ namespace QrAr.Api.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Slug")
                         .IsUnique();
 
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
+
                     b.ToTable("Experiences");
+                });
+
+            modelBuilder.Entity("QrAr.Api.Models.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsEmailConfirmed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("QrAr.Api.Models.AnalyticsEvent", b =>
@@ -167,7 +236,26 @@ namespace QrAr.Api.Migrations
 
             modelBuilder.Entity("QrAr.Api.Models.Experience", b =>
                 {
+                    b.HasOne("QrAr.Api.Models.User", null)
+                        .WithMany("Experiences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("QrAr.Api.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("QrAr.Api.Models.Experience", b =>
+                {
                     b.Navigation("Assets");
+                });
+
+            modelBuilder.Entity("QrAr.Api.Models.User", b =>
+                {
+                    b.Navigation("Experiences");
                 });
 #pragma warning restore 612, 618
         }
