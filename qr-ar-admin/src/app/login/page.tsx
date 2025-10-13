@@ -23,6 +23,7 @@ export default function Login() {
     rememberMe: false,
   });
   const [loginError, setLoginError] = useState("");
+  const [errorDetails, setErrorDetails] = useState<string[]>([]);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { login, isAuthenticated, loading } = useAuth();
@@ -38,21 +39,29 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
+    setErrorDetails([]);
     setIsLoggingIn(true);
 
     try {
-      const success = await login(formData.email, formData.password);
+      console.log("🔐 Attempting login for:", formData.email);
+      await login(formData.email, formData.password);
 
-      if (success) {
-        router.push("/experiences");
-      } else {
-        setLoginError(
-          "Credenciales inválidas. Por favor, verifica tu email y contraseña."
-        );
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      setLoginError("Error de conexión. Por favor, intenta nuevamente.");
+      // If we get here, login was successful
+      console.log("✅ Login successful, redirecting...");
+      router.push("/experiences");
+    } catch (error: any) {
+      console.error("❌ Login error:", error);
+
+      // Extract error details if available
+      const message =
+        error?.message || "Error de conexión. Por favor, intenta nuevamente.";
+      const details = error?.errors || [
+        "No se pudo conectar con el servidor",
+        "Verifica que el backend esté ejecutándose",
+      ];
+
+      setLoginError(message);
+      setErrorDetails(details);
     } finally {
       setIsLoggingIn(false);
     }
@@ -178,10 +187,35 @@ export default function Login() {
 
                 {/* Error Message */}
                 {loginError && (
-                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                    <p className="text-red-400 text-sm font-manrope">
-                      {loginError}
-                    </p>
+                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg space-y-2">
+                    <div className="flex items-start">
+                      <svg
+                        className="w-5 h-5 text-red-400 mr-2 flex-shrink-0 mt-0.5"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <div className="flex-1">
+                        <p className="text-red-400 font-semibold text-sm font-manrope">
+                          {loginError}
+                        </p>
+                        {errorDetails.length > 0 && (
+                          <ul className="mt-2 space-y-1 text-xs text-red-300/80">
+                            {errorDetails.map((detail, index) => (
+                              <li key={index} className="flex items-start">
+                                <span className="mr-1">•</span>
+                                <span>{detail}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
 

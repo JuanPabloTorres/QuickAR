@@ -7,9 +7,37 @@ import {
   User,
 } from "@/types/auth";
 
-// Get the API base URL from environment
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://localhost:5002";
+// Get the API base URL - client-side dynamic detection
+const getApiBaseUrl = () => {
+  // Server-side
+  if (typeof window === "undefined") {
+    return process.env.API_INTERNAL_BASE_URL || "http://localhost:5001";
+  }
+
+  // Client-side
+  const hostname = window.location.hostname;
+  const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+  const isNetworkIP = /^(\d{1,3}\.){3}\d{1,3}$/.test(hostname);
+
+  // Use env var if set
+  if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+    return process.env.NEXT_PUBLIC_API_BASE_URL;
+  }
+
+  // Network IP (phone/tablet)
+  if (isNetworkIP) {
+    return `http://${hostname}:5001`;
+  }
+
+  // Localhost (desktop)
+  if (isLocalhost) {
+    return "http://localhost:5001";
+  }
+
+  return "http://localhost:5001";
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class AuthService {
   private baseUrl = `${API_BASE_URL}/api/v1/auth`;
@@ -37,25 +65,94 @@ class AuthService {
     }
 
     try {
+      console.log("🔐 Making auth request to:", url);
       const response = await fetch(url, {
         ...options,
         headers,
       });
 
-      const data: ApiResponse<T> = await response.json();
+      // Try to parse response
+      let data: ApiResponse<T>;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        console.error("Failed to parse response:", parseError);
+        return {
+          success: false,
+          message: "Error al procesar la respuesta del servidor",
+          errors: ["La respuesta del servidor no es válida"],
+        };
+      }
 
       if (!response.ok) {
-        console.error("API request failed:", data);
+        console.error("API request failed:", {
+          status: response.status,
+          statusText: response.statusText,
+          data,
+        });
+
+        // Provide more specific error messages based on status code
+        if (response.status === 401) {
+          return {
+            ...data,
+            message:
+              data.message ||
+              "Credenciales inválidas. Verifica tu email y contraseña.",
+            errors: data.errors || ["Usuario o contraseña incorrectos"],
+          };
+        } else if (response.status === 404) {
+          return {
+            ...data,
+            message: data.message || "Usuario no encontrado",
+            errors: data.errors || ["El usuario no existe en el sistema"],
+          };
+        } else if (response.status === 400) {
+          return {
+            ...data,
+            message: data.message || "Datos inválidos",
+            errors: data.errors || ["Verifica los datos ingresados"],
+          };
+        } else if (response.status >= 500) {
+          return {
+            ...data,
+            message: data.message || "Error del servidor",
+            errors: data.errors || [
+              "El servidor encontró un problema. Intenta más tarde.",
+            ],
+          };
+        }
+
         return data;
       }
 
+      console.log("✅ Auth request successful");
       return data;
     } catch (error) {
       console.error("Network error:", error);
+
+      // More specific network error messages
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      if (
+        errorMessage.includes("Failed to fetch") ||
+        errorMessage.includes("NetworkError")
+      ) {
+        return {
+          success: false,
+          message: "No se pudo conectar al servidor",
+          errors: [
+            "Verifica tu conexión a internet",
+            "Asegúrate de que el backend esté ejecutándose",
+            `URL intentada: ${url}`,
+          ],
+        };
+      }
+
       return {
         success: false,
-        message: "Network error occurred",
-        errors: ["Failed to connect to server"],
+        message: "Error de red",
+        errors: [errorMessage || "No se pudo conectar con el servidor"],
       };
     }
   }

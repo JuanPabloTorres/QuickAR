@@ -38,24 +38,42 @@ interface EditFormData {
  * Upload file to server
  */
 async function uploadFile(file: File): Promise<string> {
-  // Get API base URL using same logic as experiences.ts
+  // Get API base URL using same logic as other services
   const getApiBaseUrl = () => {
+    // Server-side
     if (typeof window === "undefined") {
-      return "https://localhost:5002/api"; // Server-side fallback - use HTTPS
+      return process.env.API_INTERNAL_BASE_URL || "http://localhost:5001";
     }
 
+    // Client-side
     const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
+    const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+    const isNetworkIP = /^(\d{1,3}\.){3}\d{1,3}$/.test(hostname);
 
-    // If accessing from network (not localhost), use the same hostname and protocol for API
-    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      // Use HTTPS port 5002 if frontend is HTTPS, otherwise HTTP port 5001
-      const port = protocol === "https:" ? "5002" : "5001";
-      return `${protocol}//${hostname}:${port}/api`;
+    // Use env var if set
+    if (process.env.NEXT_PUBLIC_API_BASE_URL) {
+      console.log(
+        "🌐 Upload using configured API URL:",
+        process.env.NEXT_PUBLIC_API_BASE_URL
+      );
+      return process.env.NEXT_PUBLIC_API_BASE_URL;
     }
 
-    // Default to localhost with HTTPS
-    return "https://localhost:5002/api";
+    // Network IP (phone/tablet)
+    if (isNetworkIP) {
+      const apiUrl = `http://${hostname}:5001`;
+      console.log("📱 Upload using network API URL:", apiUrl);
+      return apiUrl;
+    }
+
+    // Localhost (desktop)
+    if (isLocalhost) {
+      const apiUrl = "http://localhost:5001";
+      console.log("💻 Upload using localhost API URL:", apiUrl);
+      return apiUrl;
+    }
+
+    return "http://localhost:5001";
   };
 
   const API_BASE_URL = getApiBaseUrl();
@@ -80,20 +98,31 @@ async function uploadFile(file: File): Promise<string> {
     category = "models";
   }
 
-  const response = await fetch(`${API_BASE_URL}/upload/${category}`, {
+  console.log(
+    "📤 Uploading file to:",
+    `${API_BASE_URL}/api/upload/${category}`
+  );
+
+  const response = await fetch(`${API_BASE_URL}/api/upload/${category}`, {
     method: "POST",
     body: formData,
   });
 
   if (!response.ok) {
-    throw new Error("Error uploading file");
+    const errorText = await response.text();
+    console.error("❌ Upload failed:", response.status, errorText);
+    throw new Error(
+      `Error uploading file: ${response.status} ${response.statusText}`
+    );
   }
 
   const result = await response.json();
   if (!result.success) {
+    console.error("❌ Upload result failed:", result);
     throw new Error(result.message || "Error uploading file");
   }
 
+  console.log("✅ Upload successful:", result.data.url);
   return result.data.url;
 }
 

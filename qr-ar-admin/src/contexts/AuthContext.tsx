@@ -71,14 +71,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (response.success && response.data) {
         setToken(response.data.token);
         setUser(response.data.user);
+        console.log("✅ Login successful in AuthContext");
         return true;
       } else {
-        console.error("Login failed:", response.message || "Unknown error");
-        return false;
+        console.error("❌ Login failed in AuthContext:", response.message);
+        // Throw error with details so login page can catch it
+        const error: any = new Error(
+          response.message || "Error de autenticación"
+        );
+        error.errors = response.errors || [];
+        throw error;
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
+    } catch (error: any) {
+      console.error("❌ Login error in AuthContext:", error);
+      // Re-throw to let the login page handle it
+      throw error;
     } finally {
       setLoading(false);
     }

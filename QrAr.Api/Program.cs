@@ -49,24 +49,48 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// Add CORS
+// Add CORS - Allow both localhost and network access
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-                "https://localhost:3000",
-                "http://localhost:3000",
-                "https://localhost:3001",
-                "http://localhost:3001",
-                "http://192.168.0.2:3000",
-                "https://192.168.0.2:3000",
-                "http://192.168.0.2:3001",
-                "https://192.168.0.2:3001"
-              )
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        // Accept any origin from localhost or local network (192.168.x.x)
+        policy.SetIsOriginAllowed(origin =>
+        {
+            if (string.IsNullOrWhiteSpace(origin))
+                return false;
+
+            var uri = new Uri(origin);
+            var host = uri.Host;
+
+            // Allow localhost and 127.0.0.1
+            if (host == "localhost" || host == "127.0.0.1")
+                return true;
+
+            // Allow local network 192.168.x.x
+            if (host.StartsWith("192.168."))
+                return true;
+
+            // Allow 172.16.x.x to 172.31.x.x (private network range)
+            if (host.StartsWith("172."))
+            {
+                var parts = host.Split('.');
+                if (parts.Length >= 2 && int.TryParse(parts[1], out int secondOctet))
+                {
+                    if (secondOctet >= 16 && secondOctet <= 31)
+                        return true;
+                }
+            }
+
+            // Allow 10.x.x.x (private network range)
+            if (host.StartsWith("10."))
+                return true;
+
+            return false;
+        })
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 
     options.AddPolicy("AllowSwagger", policy =>
