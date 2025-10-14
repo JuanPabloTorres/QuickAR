@@ -11,6 +11,12 @@ out/
 dist/
 build/
 
+# .NET build outputs
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
 # Environment variables
 .env
 .env.local
@@ -122,6 +128,9 @@ wwwroot/uploads/images/
 wwwroot/uploads/models/
 wwwroot/uploads/videos/
 wwwroot/models/
+
+# VS Code Local History
+.history/
 
 # Application specific
 *.backup
