@@ -1,10 +1,12 @@
 # QuickAR - Plataforma de Realidad Aumentada 🚀
 
-Una aplicación fullstack profesional para crear y compartir experiencias de Realidad Aumentada (AR) mediante códigos QR. Desarrollada con Next.js 15, .NET 9, y tecnologías AR de última generación.
+Una aplicación fullstack profesional para crear y compartir experiencias de Realidad Aumentada (AR) mediante códigos QR. Desarrollada con Next.js 15, .NET 9, MySQL 8.0, Docker, y tecnologías AR de última generación.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![React Three Fiber](https://img.shields.io/badge/Three.js-000000?style=flat&logo=three.js&logoColor=white)](https://threejs.org/)
 
 ## ✨ Características Principales
@@ -12,6 +14,7 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 ### 🎯 **Sistema AR Dual (Móvil + Desktop)**
 
 #### **Para Móviles (AR Real)**
+
 - ✅ **WebXR** - AR nativo en Chrome para Android
 - ✅ **Scene Viewer** - Visor AR de Google (Android)
 - ✅ **Quick Look** - AR nativo de Apple (iOS)
@@ -19,12 +22,31 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 - ✅ **model-viewer** - Librería oficial de Google para AR web
 
 #### **Para Desktop (Visualización 3D)**
+
 - ✅ **React Three Fiber** - Renderizado 3D interactivo de alta calidad
 - ✅ **Controles de Cámara** - Rotar, zoom, y desplazar con mouse
 - ✅ **Iluminación Realista** - Sombras, reflejos y entorno dinámico
 - ✅ **Grid Infinito** - Navegación espacial sin límites
 
+### 🔐 **Autenticación y Seguridad**
+
+- ✅ **JWT Authentication** - Sistema de tokens seguro
+- ✅ **Refresh Tokens** - Sesiones persistentes
+- ✅ **Password Hashing** - Bcrypt para seguridad
+- ✅ **Protected Routes** - Control de acceso por rol
+- ✅ **CORS Configurado** - Seguridad en peticiones cross-origin
+
+### 🗄️ **Base de Datos MySQL en Docker**
+
+- ✅ **MySQL 8.0** - Base de datos relacional robusta
+- ✅ **Docker Compose** - Orquestación simple
+- ✅ **Persistencia** - Volúmenes Docker para datos
+- ✅ **Healthchecks** - Monitoreo automático
+- ✅ **UTF8MB4** - Soporte completo de Unicode (emojis)
+- ✅ **Entity Framework Core** - ORM con Pomelo MySQL provider
+
 ### 📱 **Detección Inteligente de Dispositivo**
+
 - 🔍 Detecta automáticamente móvil vs desktop
 - 🔍 Identifica capacidades WebXR
 - 🔍 Reconoce plataforma (iOS/Android)
@@ -62,6 +84,7 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 
 ```
 QR-App/
+├── docker-compose.yml                 # 🐳 Configuración Docker MySQL
 ├── QrAr.Api/                          # Backend API (.NET 9)
 │   ├── Controllers/                   # Endpoints de API
 │   │   ├── ExperiencesController.cs   # CRUD de experiencias
@@ -80,15 +103,20 @@ QR-App/
 │   │   └── AuthService.cs             # Servicio de autenticación
 │   ├── Data/                          # Acceso a datos
 │   │   └── AppDbContext.cs            # Contexto de EF Core
+│   ├── Migrations/                    # 🆕 Migraciones MySQL
+│   │   └── 20251013234610_InitialMySqlMigration.cs
+│   ├── appsettings.json               # 🆕 Configuración con MySQL
 │   └── wwwroot/uploads/               # Archivos subidos
 │
 └── qr-ar-admin/                       # Frontend (Next.js 15)
+    ├── .env.local                     # 🆕 Variables de entorno
     ├── src/
     │   ├── app/                       # App Router de Next.js
     │   │   ├── ar/[id]/               # Visor AR unificado
     │   │   ├── experiences/           # Gestión de experiencias
     │   │   ├── analytics/             # Dashboard de analytics
-    │   │   └── login/                 # Autenticación
+    │   │   ├── login/                 # Autenticación
+    │   │   └── register/              # Registro de usuarios
     │   ├── components/
     │   │   ├── ar/                    # Componentes AR
     │   │   │   ├── UnifiedARViewer.tsx       # 🆕 Viewer unificado
@@ -98,15 +126,21 @@ QR-App/
     │   │   │   └── RealisticARViewer.tsx     # Viewer legacy
     │   │   ├── ui/                    # Componentes UI
     │   │   └── ProtectedRoute.tsx     # Control de acceso
+    │   ├── contexts/
+    │   │   └── AuthContext.tsx        # 🆕 Contexto de autenticación
     │   ├── hooks/
     │   │   └── useARCapabilities.ts   # 🆕 Detección de capacidades AR
     │   ├── lib/
     │   │   ├── api/                   # Clientes de API
-    │   │   │   └── experiences.ts     # API de experiencias
+    │   │   │   └── experiences.ts     # 🆕 API con JWT tokens
     │   │   ├── assetUtils.ts          # 🆕 Utilidades de assets
     │   │   └── helpers/               # Funciones auxiliares
+    │   ├── services/
+    │   │   ├── api.ts                 # 🆕 Servicio API con auth
+    │   │   └── authService.ts         # 🆕 Servicio de autenticación
     │   ├── types/
     │   │   ├── index.ts               # Tipos principales
+    │   │   ├── auth.ts                # 🆕 Tipos de autenticación
     │   │   └── model-viewer.d.ts      # 🆕 Tipos de model-viewer
     │   └── styles/
     │       ├── globals.css            # Estilos globales
@@ -121,11 +155,13 @@ QR-App/
 | Tecnología | Versión | Propósito |
 |------------|---------|-----------|
 | **.NET** | 9.0 | Framework principal |
-| **Entity Framework Core** | 9.0 | ORM y gestión de BD |
-| **SQLite** | Latest | Base de datos |
+| **Entity Framework Core** | 8.0.11 | ORM y gestión de BD |
+| **MySQL** | 8.0 | Base de datos relacional 🆕 |
+| **Pomelo.EntityFrameworkCore.MySql** | 8.0.2 | Proveedor MySQL para EF Core 🆕 |
+| **Docker** | - | Contenedor MySQL 🆕 |
 | **Minimal APIs** | - | Endpoints REST ligeros |
 | **Swagger/OpenAPI** | - | Documentación de API |
-| **JWT Authentication** | - | Autenticación segura |
+| **JWT Authentication** | - | Autenticación segura 🆕 |
 
 ### Frontend (Next.js 15)
 
@@ -150,6 +186,7 @@ Asegúrate de tener instalado:
 
 - ✅ **Node.js** 20.0 o superior
 - ✅ **.NET SDK** 9.0
+- ✅ **Docker y Docker Compose** (para MySQL) 🆕
 - ✅ **Git** para control de versiones
 - ✅ **PowerShell** 7+ (Windows) o Bash (Linux/Mac)
 
@@ -160,7 +197,35 @@ git clone https://github.com/JuanPabloTorres/QuickAR.git
 cd QuickAR
 ```
 
-### 2. Configurar Backend (.NET API)
+### 2. Iniciar Base de Datos MySQL 🐳
+
+**¡NUEVO!** Ahora usamos MySQL en Docker en lugar de SQLite:
+
+```powershell
+# Iniciar contenedor MySQL
+docker-compose up -d
+
+# Verificar que MySQL está corriendo
+docker ps
+
+# Ver logs si hay problemas
+docker-compose logs mysql
+```
+
+**Configuración de MySQL:**
+
+- **Puerto:** 3306
+- **Base de datos:** quickar_db
+- **Usuario:** quickar_user
+- **Contraseña:** QuickAR_Pass_2025!
+
+El contenedor tiene:
+
+- ✅ Healthcheck automático
+- ✅ Volumen persistente (mysql_data)
+- ✅ Red custom (quickar-network)
+
+### 3. Configurar Backend (.NET API)
 
 ```powershell
 # Navegar a la carpeta del API
@@ -179,7 +244,18 @@ dotnet run
 dotnet watch run
 ```
 
+**⚠️ IMPORTANTE:** Asegúrate de que MySQL esté corriendo antes de ejecutar el backend:
+
+```powershell
+# Verificar estado de MySQL
+docker ps | findstr mysql
+
+# Si no está corriendo, iniciarlo
+docker-compose up -d
+```
+
 El API estará disponible en:
+
 - 🌐 HTTP: `http://localhost:5001`
 - 🔒 HTTPS: `https://localhost:5002`
 - 📚 Swagger: `https://localhost:5002/swagger`
@@ -201,28 +277,63 @@ npm run dev:https
 ```
 
 El frontend estará disponible en:
+
 - 🌐 HTTP: `http://localhost:3001`
 - 🔒 HTTPS: `https://localhost:3000` (con dev:https)
 
 ### 4. Configuración de Variables de Entorno
 
-#### Backend (`QrAr.Api/appsettings.json`)
+#### Backend (`QrAr.Api/appsettings.json`) 🆕
+
+**¡ACTUALIZADO!** Ahora usa MySQL en lugar de SQLite:
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Data Source=qr_ar.db"
+    "DefaultConnection": "Server=localhost;Port=3306;Database=quickar_db;User=quickar_user;Password=QuickAR_Pass_2025!;CharSet=utf8mb4;"
   },
   "Jwt": {
-    "Key": "tu-clave-secreta-super-segura-aqui",
+    "Key": "tu-clave-secreta-super-segura-de-al-menos-32-caracteres",
     "Issuer": "QuickAR",
-    "Audience": "QuickAR-Users"
+    "Audience": "QuickAR-Users",
+    "ExpirationMinutes": 60
   },
   "AllowedOrigins": [
     "http://localhost:3001",
+    "https://localhost:3001",
     "https://localhost:3000"
   ]
 }
+```
+
+**Notas importantes:**
+
+- ✅ La cadena de conexión apunta a MySQL en Docker (puerto 3306)
+- ✅ JWT Key debe ser una cadena segura de al menos 32 caracteres
+- ✅ Los orígenes permitidos incluyen ambos protocolos HTTP/HTTPS
+
+#### Frontend (`qr-ar-admin/.env.local`) 🆕
+
+**¡NUEVO!** Crea este archivo para configuración del frontend:
+
+```env
+# URL base del API backend
+NEXT_PUBLIC_API_BASE_URL=https://localhost:5002
+API_INTERNAL_BASE_URL=https://localhost:5002
+
+# Puerto del frontend (3001 por defecto)
+# El frontend corre en https://localhost:3001
+```
+
+**Notas importantes:**
+
+- ✅ `NEXT_PUBLIC_API_BASE_URL` se expone al navegador (para llamadas desde cliente)
+- ✅ `API_INTERNAL_BASE_URL` se usa en servidor Next.js (SSR)
+- ✅ Los tokens JWT se guardan en localStorage con la clave `"auth_token"`
+    "<https://localhost:3000>"
+  ]
+}
+
 ```
 
 #### Frontend (`.env.local`)
@@ -273,19 +384,22 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:5001
 
 ### Probar AR en Diferentes Dispositivos
 
-#### En Android:
+#### En Android
+
 1. Abre Chrome en tu Android
 2. Escanea el QR o accede a la URL
 3. Para modelos 3D, verás el botón "Ver en AR"
 4. Click para activar la cámara y ver en tu espacio
 
-#### En iOS:
+#### En iOS
+
 1. Abre Safari en tu iPhone/iPad
 2. Escanea el QR o accede a la URL
 3. Para modelos 3D, aparecerá el ícono de AR
 4. Tap para usar Quick Look AR nativo
 
-#### En Desktop:
+#### En Desktop
+
 1. Abre cualquier navegador moderno
 2. Accede a la URL de la experiencia
 3. Usa mouse para interactuar:
@@ -294,18 +408,123 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:5001
    - **Click derecho + arrastrar**: Desplazar
    - **Click en objeto**: Seleccionar
 
+## 🐳 Comandos Docker Útiles
+
+### Gestión del Contenedor MySQL
+
+```powershell
+# Iniciar MySQL
+docker-compose up -d
+
+# Ver estado de contenedores
+docker ps
+
+# Ver logs en tiempo real
+docker-compose logs -f mysql
+
+# Detener MySQL
+docker-compose down
+
+# Detener y eliminar volúmenes (⚠️ borra todos los datos)
+docker-compose down -v
+
+# Reiniciar contenedor
+docker-compose restart mysql
+```
+
+### Acceso a MySQL
+
+```powershell
+# Conectarse a MySQL desde la terminal
+docker exec -it quickar-mysql mysql -u quickar_user -p
+# Password: QuickAR_Pass_2025!
+
+# Ejecutar comandos SQL directamente
+docker exec quickar-mysql mysql -u quickar_user -pQuickAR_Pass_2025! -e "SHOW DATABASES;"
+
+# Backup de la base de datos
+docker exec quickar-mysql mysqldump -u quickar_user -pQuickAR_Pass_2025! quickar_db > backup.sql
+
+# Restaurar backup
+docker exec -i quickar-mysql mysql -u quickar_user -pQuickAR_Pass_2025! quickar_db < backup.sql
+```
+
+## 🔐 Autenticación y Seguridad
+
+### Flujo de Autenticación JWT
+
+1. **Registro de Usuario**: `POST /api/v1/auth/register`
+   - Crea usuario con email y contraseña
+   - Contraseña hasheada con BCrypt
+
+2. **Login**: `POST /api/v1/auth/login`
+   - Retorna JWT token válido por 60 minutos
+   - Token incluye: userId, email, roles
+
+3. **Uso del Token**:
+   - Frontend guarda token en `localStorage` con clave `"auth_token"`
+   - Incluye en header: `Authorization: Bearer {token}`
+   - API valida token en cada request protegido
+
+4. **Protección de Rutas**:
+   - Backend: Usa `[Authorize]` attribute
+   - Frontend: Usa `ProtectedRoute` component
+
+### Endpoints de Autenticación
+
+```typescript
+// Registro
+POST /api/v1/auth/register
+{
+  "email": "usuario@example.com",
+  "password": "Password123!",
+  "fullName": "Usuario Test"
+}
+
+// Login
+POST /api/v1/auth/login
+{
+  "email": "usuario@example.com",
+  "password": "Password123!"
+}
+
+// Respuesta
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "userId": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "usuario@example.com",
+  "expiresAt": "2024-01-15T12:00:00Z"
+}
+```
+
+### Uso en Frontend
+
+```typescript
+// authService guarda el token
+localStorage.setItem("auth_token", token);
+
+// experiences.ts y api.ts lo leen
+const token = localStorage.getItem("auth_token");
+
+// Lo incluyen en headers
+headers: {
+  'Authorization': `Bearer ${token}`,
+  'Content-Type': 'application/json'
+}
+```
+
 ## 🎯 Endpoints de API
 
 ### Experiencias
 
 ```http
-GET    /api/v1/experiences              # Listar todas
+GET    /api/v1/experiences              # Listar todas (requiere auth 🔒)
 GET    /api/v1/experiences/{id}         # Obtener por ID
 GET    /api/v1/experiences/slug/{slug}  # Obtener por slug
-POST   /api/v1/experiences              # Crear nueva
-PUT    /api/v1/experiences/{id}         # Actualizar
-DELETE /api/v1/experiences/{id}         # Eliminar
-PATCH  /api/v1/experiences/{id}/toggle-active  # Activar/Desactivar
+POST   /api/v1/experiences              # Crear nueva (requiere auth 🔒)
+PUT    /api/v1/experiences/{id}         # Actualizar (requiere auth 🔒)
+DELETE /api/v1/experiences/{id}         # Eliminar (requiere auth 🔒)
+PATCH  /api/v1/experiences/{id}/toggle-active  # Activar/Desactivar (requiere auth 🔒)
 ```
 
 ### Assets de Archivo
@@ -366,24 +585,28 @@ Look
 ### Componentes AR Clave
 
 #### 1. **UnifiedARViewer** 🎯
+
 - Punto de entrada principal
 - Detecta capacidades del dispositivo
 - Rutea al viewer apropiado
 - Maneja estados de carga y error
 
 #### 2. **MobileARViewer** 📱
+
 - Usa `<model-viewer>` de Google
 - Soporta WebXR, Scene Viewer, Quick Look
 - Botón "Ver en AR" prominente
 - Renderiza todos los tipos de assets
 
 #### 3. **Desktop3DViewer** 🖥️
+
 - Usa React Three Fiber
 - Escena 3D interactiva completa
 - Controles de cámara orbital
 - Iluminación y sombras realistas
 
 #### 4. **useARCapabilities** 🔍
+
 - Hook personalizado
 - Detecta tipo de dispositivo
 - Verifica soporte WebXR
@@ -395,6 +618,7 @@ Look
 ### Checklist de Pruebas
 
 #### Desktop
+
 - [ ] Visualización 3D funciona en Chrome
 - [ ] Visualización 3D funciona en Firefox
 - [ ] Visualización 3D funciona en Safari
@@ -403,6 +627,7 @@ Look
 - [ ] Navegación entre assets fluida
 
 #### Android
+
 - [ ] Chrome: WebXR funciona
 - [ ] Chrome: Scene Viewer funciona
 - [ ] Firefox: Visualización funciona
@@ -410,6 +635,7 @@ Look
 - [ ] Cámara se activa correctamente
 
 #### iOS
+
 - [ ] Safari: Quick Look funciona
 - [ ] Chrome: Visualización funciona
 - [ ] Botón AR visible
@@ -436,18 +662,21 @@ dotnet build
 ## 📈 Roadmap
 
 ### Versión 1.1 (Q4 2025)
+
 - [ ] Editor AR en tiempo real
 - [ ] Plantillas de experiencias predefinidas
 - [ ] Exportación de experiencias
 - [ ] Colaboración multi-usuario
 
 ### Versión 1.2 (Q1 2026)
+
 - [ ] Marketplace de assets 3D
 - [ ] Animaciones en modelos 3D
 - [ ] Audio espacial
 - [ ] Geolocalización AR
 
 ### Versión 2.0 (Q2 2026)
+
 - [ ] AR Cloud (persistencia)
 - [ ] Multiplayer AR
 - [ ] IA generativa de assets
@@ -455,40 +684,130 @@ dotnet build
 
 ## 🐛 Solución de Problemas
 
-### Error: "AR no disponible"
-**Causa**: Dispositivo no soporta AR o conexión no segura
+### Error: "Unable to connect to any of the specified MySQL hosts" 🆕
+
+**Causa**: MySQL no está corriendo o no está accesible
 **Solución**:
-- Verifica que estás usando HTTPS o localhost
-- Asegúrate que el dispositivo soporta WebXR
-- En Android, actualiza Chrome a última versión
-- En iOS, usa Safari (no Chrome)
+
+```powershell
+# 1. Verificar que Docker está corriendo
+docker ps
+
+# 2. Si no aparece quickar-mysql, iniciarlo
+docker-compose up -d
+
+# 3. Verificar logs de MySQL
+docker-compose logs mysql
+
+# 4. Verificar healthcheck
+docker inspect quickar-mysql | findstr "Health"
+
+# 5. Reiniciar contenedor si es necesario
+docker-compose restart mysql
+```
+
+### Error: "Authentication to host 'localhost' failed" 🆕
+
+**Causa**: Credenciales incorrectas en connection string
+**Solución**:
+
+- Verifica que `appsettings.json` tiene las credenciales correctas:
+  - User: `quickar_user`
+  - Password: `QuickAR_Pass_2025!`
+  - Database: `quickar_db`
+  - Port: `3306`
+
+```json
+"DefaultConnection": "Server=localhost;Port=3306;Database=quickar_db;User=quickar_user;Password=QuickAR_Pass_2025!;CharSet=utf8mb4;"
+```
+
+### Error: "401 Unauthorized" en llamadas a API 🆕
+
+**Causa**: Token JWT no se está enviando correctamente
+**Solución**:
+
+```typescript
+// 1. Verificar que el token se guardó en localStorage
+console.log(localStorage.getItem("auth_token"));
+
+// 2. Verificar que se incluye en headers (experiences.ts y api.ts)
+const token = localStorage.getItem("auth_token");
+headers: {
+  'Authorization': `Bearer ${token}`,
+  'Content-Type': 'application/json'
+}
+
+// 3. Verificar que el token no expiró
+// Los tokens JWT expiran después de 60 minutos por defecto
+// Si expiró, hacer login nuevamente
+```
+
+### Error: "Cannot find module '@google/model-viewer'"
+
+**Causa**: Dependencias de frontend no instaladas
+**Solución**:
+
+```powershell
+cd qr-ar-admin
+npm install
+# O si persiste:
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Error: "Port 3306 already in use" 🆕
+
+**Causa**: Otro servicio MySQL ya está usando el puerto 3306
+**Solución**:
+
+```powershell
+# Opción 1: Detener otro MySQL
+# En Windows:
+Stop-Service MySQL80  # O el nombre de tu servicio
+
+# Opción 2: Cambiar puerto en docker-compose.yml
+# Editar docker-compose.yml:
+ports:
+  - "3307:3306"  # Usa 3307 en lugar de 3306
+
+# Y actualizar appsettings.json:
+"Server=localhost;Port=3307;Database=quickar_db;..."
+```
 
 ### Error: "AR no disponible"
+
 **Causa**: Dispositivo no soporta AR o conexión no segura
 **Solución**:
+
 - Verifica que estás usando HTTPS o localhost
 - Asegúrate que el dispositivo soporta WebXR
 - En Android, actualiza Chrome a última versión
 - En iOS, usa Safari (no Chrome)
 
 ### Error: "Modelo 3D no carga"
+
 **Causa**: Archivo corrupto, formato no soportado, o problema de CORS
 **Solución**:
+
 - Verifica que el archivo es `.glb` o `.gltf` válido
 - Confirma que el archivo no excede 50MB
 - Revisa la consola del navegador para errores CORS
 - Asegúrate que el backend está corriendo
 
 ### Error: "No se puede subir archivo"
+
 **Causa**: Archivo muy grande o tipo no permitido
 **Solución**:
+
 - Máximo 50MB por archivo
 - Solo se permiten: `.glb`, `.gltf`, `.jpg`, `.png`, `.webp`, `.mp4`, `.webm`
 - Verifica permisos de escritura en `wwwroot/uploads/`
 
 ### Performance: "Modelo 3D lento"
+
 **Causa**: Modelo muy complejo o dispositivo limitado
 **Solución**:
+
 - Optimiza el modelo (reduce polígonos)
 - Usa texturas comprimidas
 - Considera usar LOD (Level of Detail)
@@ -497,17 +816,20 @@ dotnet build
 ## 🔒 Seguridad
 
 ### Autenticación
+
 - JWT (JSON Web Tokens) con expiración
 - Refresh tokens para sesiones largas
 - Passwords hasheados con bcrypt
 - Protección CSRF en formularios
 
 ### CORS
+
 - Configurado solo para orígenes permitidos
 - Headers de seguridad apropiados
 - Rate limiting en endpoints sensibles
 
 ### File Upload
+
 - Validación de tipo MIME
 - Límite de tamaño de archivo
 - Nombres de archivo sanitizados
@@ -518,6 +840,7 @@ dotnet build
 ### Estructura de Datos
 
 #### Experience
+
 ```typescript
 interface Experience {
   id: string;              // GUID único
@@ -533,6 +856,7 @@ interface Experience {
 ```
 
 #### Asset
+
 ```typescript
 interface Asset {
   id: string;              // GUID único
@@ -606,6 +930,7 @@ npm install          # Reinstalar dependencias
 ¡Las contribuciones son bienvenidas! Por favor sigue estos pasos:
 
 ### 1. Fork y Clone
+
 ```bash
 # Fork el repositorio en GitHub
 git clone https://github.com/tu-usuario/QuickAR.git
@@ -613,6 +938,7 @@ cd QuickAR
 ```
 
 ### 2. Crear Rama
+
 ```bash
 # Crear rama para tu feature
 git checkout -b feature/mi-nueva-caracteristica
@@ -622,12 +948,14 @@ git checkout -b fix/arreglar-bug
 ```
 
 ### 3. Desarrollar
+
 - Sigue las convenciones de código existentes
 - Escribe código TypeScript tipado
 - Agrega comentarios JSDoc donde sea necesario
 - Prueba en múltiples navegadores/dispositivos
 
 ### 4. Commit
+
 ```bash
 # Commits descriptivos siguiendo conventional commits
 git commit -m "feat: agregar nueva característica X"
@@ -636,6 +964,7 @@ git commit -m "docs: actualizar README"
 ```
 
 ### 5. Push y Pull Request
+
 ```bash
 # Push a tu fork
 git push origin feature/mi-nueva-caracteristica
@@ -648,18 +977,21 @@ git push origin feature/mi-nueva-caracteristica
 ### Guías de Estilo
 
 #### TypeScript
+
 - Usa `interface` para objetos, `type` para uniones
 - Nombra interfaces con prefijo `I` solo si es necesario
 - Prefiere `const` sobre `let`, evita `var`
 - Usa arrow functions para callbacks
 
 #### React
+
 - Componentes funcionales con hooks
 - Props destructuring en la firma
 - `memo()` para componentes pesados
 - Custom hooks con prefijo `use`
 
 #### CSS
+
 - Usa Tailwind classes cuando sea posible
 - Evita estilos inline
 - Agrupa clases relacionadas
@@ -696,13 +1028,15 @@ SOFTWARE.
 ## 📞 Contacto y Soporte
 
 ### Reportar Problemas
+
 - 🐛 **Bugs**: [Abrir Issue en GitHub](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=bug_report.md)
 - 💡 **Feature Request**: [Sugerir Feature](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=feature_request.md)
 - 📖 **Documentación**: [Mejorar Docs](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=documentation.md)
 
 ### Comunidad
+
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/JuanPabloTorres/QuickAR/discussions)
-- 📧 **Email**: support@quickar.dev
+- 📧 **Email**: <support@quickar.dev>
 - 🐦 **Twitter**: [@QuickARDev](https://twitter.com/QuickARDev)
 
 ## 🙏 Agradecimientos
@@ -723,6 +1057,7 @@ Este proyecto fue posible gracias a:
 Envía un PR agregando tu proyecto aquí o menciona [@QuickARDev](https://twitter.com/QuickARDev) en Twitter.
 
 ### Ejemplos de Uso
+
 - 🏛️ **Museos**: Tours virtuales AR
 - 🏢 **Real Estate**: Visualización de propiedades
 - 🎓 **Educación**: Modelos anatómicos 3D

@@ -1,0 +1,248 @@
+/**
+ * Simple AR Canvas Component using model-viewer
+ * Fallback solution to avoid React Three Fiber compatibility issues
+ */
+
+"use client";
+
+import { Experience } from "@/types";
+import { useEffect, useState } from "react";
+import { smartResolveModelUrl } from "@/lib/helpers/modelUrlResolver";
+
+// Custom hook to safely load model-viewer
+function useModelViewer() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only load on client side
+    if (typeof window === "undefined") return;
+
+    const loadModelViewer = async () => {
+      try {
+        // Check if already loaded
+        if (customElements.get("model-viewer")) {
+          setIsLoaded(true);
+          return;
+        }
+
+        // Import model-viewer dynamically
+        await import("@google/model-viewer");
+        setIsLoaded(true);
+      } catch (err) {
+        console.error("Failed to load model-viewer:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load 3D viewer"
+        );
+      }
+    };
+
+    loadModelViewer();
+  }, []);
+
+  return { isLoaded, error };
+}
+
+interface SimpleARCanvasProps {
+  experience: Experience;
+  className?: string;
+  onPerformanceChange?: (performance: any) => void;
+}
+
+// Model Viewer Component - Fallback for React Three Fiber compatibility issues
+function ModelViewerARScene({ experience }: { experience: Experience }) {
+  const { isLoaded, error } = useModelViewer();
+  const [resolvedModelUrl, setResolvedModelUrl] = useState<string | null>(null);
+  const [isResolvingUrl, setIsResolvingUrl] = useState(false);
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
+        <div>Error loading 3D viewer: {error}</div>
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
+        <div>Loading 3D viewer...</div>
+      </div>
+    );
+  }
+
+  // Get first 3D model from experience
+  const firstModel = experience.assets.find(
+    (asset) => asset.assetType === "model3d"
+  );
+
+  // Fallback for no models
+  if (!firstModel) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-900 to-purple-900 text-white">
+        <div className="text-center">
+          <div className="text-2xl mb-2">🎯</div>
+          <div>AR Experience Ready</div>
+          <div className="text-sm opacity-75">No 3D models configured</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Smart URL resolution with async handling
+  useEffect(() => {
+    const resolveUrl = async () => {
+      if (!firstModel) return;
+      
+      setIsResolvingUrl(true);
+      try {
+        console.log('🔍 Resolving model URL for:', firstModel.name);
+        const resolved = await smartResolveModelUrl(
+          firstModel.assetUrl,
+          firstModel.name,
+          firstModel.id
+        );
+        
+        // Ensure URL is absolute for model-viewer
+        const fullUrl = resolved.startsWith('/') 
+          ? `${typeof window !== "undefined" ? window.location.origin : "http://localhost:5001"}${resolved}`
+          : resolved;
+          
+        setResolvedModelUrl(fullUrl);
+        console.log('✅ Resolved model URL:', fullUrl);
+      } catch (error) {
+        console.error('❌ Failed to resolve model URL:', error);
+        setResolvedModelUrl(null);
+      } finally {
+        setIsResolvingUrl(false);
+      }
+    };
+
+    resolveUrl();
+  }, [firstModel]);
+
+  // Show loading state while resolving URL
+  if (isResolvingUrl || !resolvedModelUrl) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
+        <div className="text-center">
+          <div className="text-2xl mb-2">🔍</div>
+          <div>Resolving 3D model...</div>
+          {firstModel && (
+            <div className="text-sm opacity-75 mt-2">
+              {firstModel.assetUrl?.startsWith('blob:') ? 'Fixing blob URL' : 'Loading model'}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full relative">
+      <model-viewer
+        src={resolvedModelUrl}
+        alt={firstModel.name || "3D Model"}
+        camera-controls
+        auto-rotate
+        auto-rotate-delay={3000}
+        rotation-per-second="30deg"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="fixed"
+        camera-orbit="0deg 75deg 1.5m"
+        field-of-view="30deg"
+        className="w-full h-full"
+        onError={() => {
+          const errorDiv = document.getElementById("model-error");
+          if (errorDiv) errorDiv.classList.remove("hidden");
+          console.error("❌ Model failed to load:", resolvedModelUrl);
+        }}
+      />
+
+      {/* AR Info Overlay */}
+      <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white p-2 rounded">
+        <div className="text-sm">
+          <div>Model: {firstModel.name}</div>
+          <div>Format: {resolvedModelUrl?.split(".").pop()?.toUpperCase()}</div>
+          <div className="text-xs opacity-75">
+            {firstModel.assetUrl?.startsWith("blob:") ? (
+              <span className="text-red-300">⚠️ Blob URL (resolved)</span>
+            ) : (
+              <span className="text-green-300">✓ Valid URL</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Model Loading Error Handler */}
+      <div className="absolute bottom-20 left-4 right-4">
+        <div
+          id="model-error"
+          className="hidden bg-red-600 bg-opacity-90 text-white p-3 rounded text-sm"
+        >
+          <div className="font-bold">❌ Error loading 3D model</div>
+          <div>URL: {resolvedModelUrl}</div>
+          <div className="text-xs mt-1 opacity-75">
+            {firstModel.assetUrl?.startsWith("blob:")
+              ? "Original blob URL was converted but file not found"
+              : "Check if the model file exists and is accessible"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SimpleARCanvas({
+  experience,
+  className = "",
+  onPerformanceChange,
+}: SimpleARCanvasProps) {
+  return (
+    <div className={`w-full h-full relative ${className}`}>
+      {/* Use model-viewer instead of React Three Fiber to avoid compatibility issues */}
+      <ModelViewerARScene experience={experience} />
+
+      {/* Simple AR Controls */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
+        <button
+          onClick={() => {
+            console.log("AR mode requested for experience:", experience.id);
+            onPerformanceChange?.({ fps: 60, status: "AR requested" });
+
+            // Try to activate AR if model-viewer supports it
+            const modelViewer = document.querySelector("model-viewer");
+            if (modelViewer && "activateAR" in modelViewer) {
+              (modelViewer as any).activateAR();
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg mr-2 transition-colors"
+        >
+          Activar AR
+        </button>
+        <button
+          onClick={() => {
+            console.log("VR mode requested for experience:", experience.id);
+            onPerformanceChange?.({ fps: 60, status: "VR requested" });
+
+            // Basic info about VR capabilities
+            if (navigator.xr) {
+              navigator.xr
+                .isSessionSupported("immersive-vr")
+                .then((supported) => {
+                  console.log("VR supported:", supported);
+                });
+            }
+          }}
+          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          Activar VR
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Export both default and named export for compatibility
+export { SimpleARCanvas };

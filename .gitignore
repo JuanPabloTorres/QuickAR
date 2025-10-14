@@ -118,6 +118,9 @@ _archive/
 # Models and uploads that might be large
 public/models/
 wwwroot/uploads/
+wwwroot/uploads/images/
+wwwroot/uploads/models/
+wwwroot/uploads/videos/
 wwwroot/models/
 
 # Application specific
