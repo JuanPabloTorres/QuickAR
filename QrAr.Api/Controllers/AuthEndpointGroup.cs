@@ -47,6 +47,17 @@ public class AuthEndpointGroup : BaseEndpointGroup
             .Produces<ApiResponse<object>>(401)
             .RequireAuthorization();
 
+        // PUT /api/v1/auth/profile
+        group.MapPut("/profile", UpdateProfileAsync)
+            .WithName("UpdateProfile")
+            .WithSummary("Actualizar perfil del usuario")
+            .WithDescription("Actualiza la información del perfil del usuario autenticado")
+            .Accepts<UpdateProfileDto>("application/json")
+            .Produces<ApiResponse<UserDto>>(200)
+            .Produces<ApiResponse<object>>(400)
+            .Produces<ApiResponse<object>>(401)
+            .RequireAuthorization();
+
         // POST /api/v1/auth/change-password
         group.MapPost("/change-password", ChangePasswordAsync)
             .WithName("ChangePassword")
@@ -111,6 +122,28 @@ public class AuthEndpointGroup : BaseEndpointGroup
         }
 
         var result = await authService.GetCurrentUserAsync(userId);
+
+        return result.Success
+            ? Results.Ok(result)
+            : Results.BadRequest(result);
+    }
+
+    /// <summary>
+    /// Update user profile
+    /// </summary>
+    private static async Task<IResult> UpdateProfileAsync(
+        UpdateProfileDto updateProfileDto,
+        ClaimsPrincipal user,
+        IAuthService authService)
+    {
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (!Guid.TryParse(userIdClaim, out var userId))
+        {
+            return Results.Unauthorized();
+        }
+
+        var result = await authService.UpdateProfileAsync(userId, updateProfileDto);
 
         return result.Success
             ? Results.Ok(result)
