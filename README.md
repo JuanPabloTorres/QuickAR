@@ -14,6 +14,7 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 ### 🎯 **Sistema AR Dual (Móvil + Desktop)**
 
 #### **Para Móviles (AR Real)**
+
 - ✅ **WebXR** - AR nativo en Chrome para Android
 - ✅ **Scene Viewer** - Visor AR de Google (Android)
 - ✅ **Quick Look** - AR nativo de Apple (iOS)
@@ -21,12 +22,14 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 - ✅ **model-viewer** - Librería oficial de Google para AR web
 
 #### **Para Desktop (Visualización 3D)**
+
 - ✅ **React Three Fiber** - Renderizado 3D interactivo de alta calidad
 - ✅ **Controles de Cámara** - Rotar, zoom, y desplazar con mouse
 - ✅ **Iluminación Realista** - Sombras, reflejos y entorno dinámico
 - ✅ **Grid Infinito** - Navegación espacial sin límites
 
 ### 🔐 **Autenticación y Seguridad**
+
 - ✅ **JWT Authentication** - Sistema de tokens seguro
 - ✅ **Refresh Tokens** - Sesiones persistentes
 - ✅ **Password Hashing** - Bcrypt para seguridad
@@ -34,6 +37,7 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 - ✅ **CORS Configurado** - Seguridad en peticiones cross-origin
 
 ### 🗄️ **Base de Datos MySQL en Docker**
+
 - ✅ **MySQL 8.0** - Base de datos relacional robusta
 - ✅ **Docker Compose** - Orquestación simple
 - ✅ **Persistencia** - Volúmenes Docker para datos
@@ -42,6 +46,7 @@ Una aplicación fullstack profesional para crear y compartir experiencias de Rea
 - ✅ **Entity Framework Core** - ORM con Pomelo MySQL provider
 
 ### 📱 **Detección Inteligente de Dispositivo**
+
 - 🔍 Detecta automáticamente móvil vs desktop
 - 🔍 Identifica capacidades WebXR
 - 🔍 Reconoce plataforma (iOS/Android)
@@ -208,12 +213,14 @@ docker-compose logs mysql
 ```
 
 **Configuración de MySQL:**
+
 - **Puerto:** 3306
 - **Base de datos:** quickar_db
 - **Usuario:** quickar_user
 - **Contraseña:** QuickAR_Pass_2025!
 
 El contenedor tiene:
+
 - ✅ Healthcheck automático
 - ✅ Volumen persistente (mysql_data)
 - ✅ Red custom (quickar-network)
@@ -270,6 +277,7 @@ npm run dev:https
 ```
 
 El frontend estará disponible en:
+
 - 🌐 HTTP: `http://localhost:3001`
 - 🔒 HTTPS: `https://localhost:3000` (con dev:https)
 
@@ -299,6 +307,7 @@ El frontend estará disponible en:
 ```
 
 **Notas importantes:**
+
 - ✅ La cadena de conexión apunta a MySQL en Docker (puerto 3306)
 - ✅ JWT Key debe ser una cadena segura de al menos 32 caracteres
 - ✅ Los orígenes permitidos incluyen ambos protocolos HTTP/HTTPS
@@ -317,12 +326,14 @@ API_INTERNAL_BASE_URL=https://localhost:5002
 ```
 
 **Notas importantes:**
+
 - ✅ `NEXT_PUBLIC_API_BASE_URL` se expone al navegador (para llamadas desde cliente)
 - ✅ `API_INTERNAL_BASE_URL` se usa en servidor Next.js (SSR)
 - ✅ Los tokens JWT se guardan en localStorage con la clave `"auth_token"`
-    "https://localhost:3000"
+    "<https://localhost:3000>"
   ]
 }
+
 ```
 
 #### Frontend (`.env.local`)
@@ -373,20 +384,21 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:5001
 
 ### Probar AR en Diferentes Dispositivos
 
-#### En Android:
+#### En Android
+
 1. Abre Chrome en tu Android
 2. Escanea el QR o accede a la URL
 3. Para modelos 3D, verás el botón "Ver en AR"
 4. Click para activar la cámara y ver en tu espacio
 
-#### En iOS:
+#### En iOS
 
 1. Abre Safari en tu iPhone/iPad
 2. Escanea el QR o accede a la URL
 3. Para modelos 3D, aparecerá el ícono de AR
 4. Tap para usar Quick Look AR nativo
 
-#### En Desktop:
+#### En Desktop
 
 1. Abre cualquier navegador moderno
 2. Accede a la URL de la experiencia
@@ -573,24 +585,28 @@ Look
 ### Componentes AR Clave
 
 #### 1. **UnifiedARViewer** 🎯
+
 - Punto de entrada principal
 - Detecta capacidades del dispositivo
 - Rutea al viewer apropiado
 - Maneja estados de carga y error
 
 #### 2. **MobileARViewer** 📱
+
 - Usa `<model-viewer>` de Google
 - Soporta WebXR, Scene Viewer, Quick Look
 - Botón "Ver en AR" prominente
 - Renderiza todos los tipos de assets
 
 #### 3. **Desktop3DViewer** 🖥️
+
 - Usa React Three Fiber
 - Escena 3D interactiva completa
 - Controles de cámara orbital
 - Iluminación y sombras realistas
 
 #### 4. **useARCapabilities** 🔍
+
 - Hook personalizado
 - Detecta tipo de dispositivo
 - Verifica soporte WebXR
@@ -602,6 +618,7 @@ Look
 ### Checklist de Pruebas
 
 #### Desktop
+
 - [ ] Visualización 3D funciona en Chrome
 - [ ] Visualización 3D funciona en Firefox
 - [ ] Visualización 3D funciona en Safari
@@ -610,6 +627,7 @@ Look
 - [ ] Navegación entre assets fluida
 
 #### Android
+
 - [ ] Chrome: WebXR funciona
 - [ ] Chrome: Scene Viewer funciona
 - [ ] Firefox: Visualización funciona
@@ -617,6 +635,7 @@ Look
 - [ ] Cámara se activa correctamente
 
 #### iOS
+
 - [ ] Safari: Quick Look funciona
 - [ ] Chrome: Visualización funciona
 - [ ] Botón AR visible
@@ -643,18 +662,21 @@ dotnet build
 ## 📈 Roadmap
 
 ### Versión 1.1 (Q4 2025)
+
 - [ ] Editor AR en tiempo real
 - [ ] Plantillas de experiencias predefinidas
 - [ ] Exportación de experiencias
 - [ ] Colaboración multi-usuario
 
 ### Versión 1.2 (Q1 2026)
+
 - [ ] Marketplace de assets 3D
 - [ ] Animaciones en modelos 3D
 - [ ] Audio espacial
 - [ ] Geolocalización AR
 
 ### Versión 2.0 (Q2 2026)
+
 - [ ] AR Cloud (persistencia)
 - [ ] Multiplayer AR
 - [ ] IA generativa de assets
@@ -763,23 +785,29 @@ ports:
 - En iOS, usa Safari (no Chrome)
 
 ### Error: "Modelo 3D no carga"
+
 **Causa**: Archivo corrupto, formato no soportado, o problema de CORS
 **Solución**:
+
 - Verifica que el archivo es `.glb` o `.gltf` válido
 - Confirma que el archivo no excede 50MB
 - Revisa la consola del navegador para errores CORS
 - Asegúrate que el backend está corriendo
 
 ### Error: "No se puede subir archivo"
+
 **Causa**: Archivo muy grande o tipo no permitido
 **Solución**:
+
 - Máximo 50MB por archivo
 - Solo se permiten: `.glb`, `.gltf`, `.jpg`, `.png`, `.webp`, `.mp4`, `.webm`
 - Verifica permisos de escritura en `wwwroot/uploads/`
 
 ### Performance: "Modelo 3D lento"
+
 **Causa**: Modelo muy complejo o dispositivo limitado
 **Solución**:
+
 - Optimiza el modelo (reduce polígonos)
 - Usa texturas comprimidas
 - Considera usar LOD (Level of Detail)
@@ -788,17 +816,20 @@ ports:
 ## 🔒 Seguridad
 
 ### Autenticación
+
 - JWT (JSON Web Tokens) con expiración
 - Refresh tokens para sesiones largas
 - Passwords hasheados con bcrypt
 - Protección CSRF en formularios
 
 ### CORS
+
 - Configurado solo para orígenes permitidos
 - Headers de seguridad apropiados
 - Rate limiting en endpoints sensibles
 
 ### File Upload
+
 - Validación de tipo MIME
 - Límite de tamaño de archivo
 - Nombres de archivo sanitizados
@@ -809,6 +840,7 @@ ports:
 ### Estructura de Datos
 
 #### Experience
+
 ```typescript
 interface Experience {
   id: string;              // GUID único
@@ -824,6 +856,7 @@ interface Experience {
 ```
 
 #### Asset
+
 ```typescript
 interface Asset {
   id: string;              // GUID único
@@ -897,6 +930,7 @@ npm install          # Reinstalar dependencias
 ¡Las contribuciones son bienvenidas! Por favor sigue estos pasos:
 
 ### 1. Fork y Clone
+
 ```bash
 # Fork el repositorio en GitHub
 git clone https://github.com/tu-usuario/QuickAR.git
@@ -904,6 +938,7 @@ cd QuickAR
 ```
 
 ### 2. Crear Rama
+
 ```bash
 # Crear rama para tu feature
 git checkout -b feature/mi-nueva-caracteristica
@@ -913,12 +948,14 @@ git checkout -b fix/arreglar-bug
 ```
 
 ### 3. Desarrollar
+
 - Sigue las convenciones de código existentes
 - Escribe código TypeScript tipado
 - Agrega comentarios JSDoc donde sea necesario
 - Prueba en múltiples navegadores/dispositivos
 
 ### 4. Commit
+
 ```bash
 # Commits descriptivos siguiendo conventional commits
 git commit -m "feat: agregar nueva característica X"
@@ -927,6 +964,7 @@ git commit -m "docs: actualizar README"
 ```
 
 ### 5. Push y Pull Request
+
 ```bash
 # Push a tu fork
 git push origin feature/mi-nueva-caracteristica
@@ -939,18 +977,21 @@ git push origin feature/mi-nueva-caracteristica
 ### Guías de Estilo
 
 #### TypeScript
+
 - Usa `interface` para objetos, `type` para uniones
 - Nombra interfaces con prefijo `I` solo si es necesario
 - Prefiere `const` sobre `let`, evita `var`
 - Usa arrow functions para callbacks
 
 #### React
+
 - Componentes funcionales con hooks
 - Props destructuring en la firma
 - `memo()` para componentes pesados
 - Custom hooks con prefijo `use`
 
 #### CSS
+
 - Usa Tailwind classes cuando sea posible
 - Evita estilos inline
 - Agrupa clases relacionadas
@@ -987,13 +1028,15 @@ SOFTWARE.
 ## 📞 Contacto y Soporte
 
 ### Reportar Problemas
+
 - 🐛 **Bugs**: [Abrir Issue en GitHub](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=bug_report.md)
 - 💡 **Feature Request**: [Sugerir Feature](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=feature_request.md)
 - 📖 **Documentación**: [Mejorar Docs](https://github.com/JuanPabloTorres/QuickAR/issues/new?template=documentation.md)
 
 ### Comunidad
+
 - 💬 **Discussions**: [GitHub Discussions](https://github.com/JuanPabloTorres/QuickAR/discussions)
-- 📧 **Email**: support@quickar.dev
+- 📧 **Email**: <support@quickar.dev>
 - 🐦 **Twitter**: [@QuickARDev](https://twitter.com/QuickARDev)
 
 ## 🙏 Agradecimientos
@@ -1014,6 +1057,7 @@ Este proyecto fue posible gracias a:
 Envía un PR agregando tu proyecto aquí o menciona [@QuickARDev](https://twitter.com/QuickARDev) en Twitter.
 
 ### Ejemplos de Uso
+
 - 🏛️ **Museos**: Tours virtuales AR
 - 🏢 **Real Estate**: Visualización de propiedades
 - 🎓 **Educación**: Modelos anatómicos 3D
