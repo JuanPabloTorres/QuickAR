@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Experience - EMERGENCY SOLUTION</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        #arContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        #arCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+            z-index: 20;
+        }
+        
+        #startBtn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 30;
+        }
+    </style>
+</head>
+<body>
+    <div id="arContainer">
+        <button id="startBtn">INICIAR AR</button>
+        
+        <video id="video" playsinline muted style="display: none;"></video>
+        <canvas id="arCanvas" style="display: none;"></canvas>
+        
+        <div class="status" id="status">
+            Presiona INICIAR AR para comenzar
+        </div>
+        
+        <div class="controls" style="display: none;" id="controls">
+            <button class="btn" onclick="previousAsset()">← Anterior</button>
+            <button class="btn" onclick="centerObject()">Centrar</button>
+            <button class="btn" onclick="resetScale()">Tamaño Normal</button>
+            <button class="btn" onclick="nextAsset()">Siguiente →</button>
+        </div>
+    </div>
+
+    <script>
+        let video, canvas, ctx;
+        let isARActive = false;
+        let experience = null;
+        let currentAssetIndex = 0;
+        let arObjectPosition = {x: 0.5, y: 0.5};
+        let arObjectScale = 1.0;
+
+        // Sample experience data - HARDCODED FOR EMERGENCY
+        const sampleExperience = {
+            id: "sample",
+            title: "AR Test Experience",
+            assets: [
+                {
+                    id: "1",
+                    name: "Mensaje de Prueba",
+                    assetType: "message",
+                    assetContent: "¡Hola! Este es un mensaje AR de prueba."
+                },
+                {
+                    id: "2", 
+                    name: "Imagen de Prueba",
+                    assetType: "image",
+                    assetUrl: "https://via.placeholder.com/200x200/ff0000/ffffff?text=AR+IMAGE"
+                },
+                {
+                    id: "3",
+                    name: "Video de Prueba", 
+                    assetType: "video",
+                    assetUrl: "sample-video.mp4"
+                }
+            ]
+        };
+
+        document.getElementById('startBtn').addEventListener('click', async () => {
+            try {
+                video = document.getElementById('video');
+                canvas = document.getElementById('arCanvas');
+                ctx = canvas.getContext('2d');
+                
+                // Get camera access
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+                
+                video.srcObject = stream;
+                await video.play();
+                
+                // Setup UI
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('video').style.display = 'block';
+                document.getElementById('arCanvas').style.display = 'block';
+                document.getElementById('controls').style.display = 'flex';
+                document.getElementById('status').innerHTML = '✅ AR ACTIVO - Cámara funcionando';
+                
+                // Load sample experience
+                experience = sampleExperience;
+                isARActive = true;
+                
+                // Start rendering
+                setupCanvas();
+                startARRendering();
+                
+            } catch (error) {
+                console.error('Error starting AR:', error);
+                document.getElementById('status').innerHTML = '❌ Error: ' + error.message;
+            }
+        });
+
+        function setupCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        function startARRendering() {
+            function renderFrame() {
+                if (!isARActive || !ctx) return;
+                
+                // Setup canvas
+                setupCanvas();
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // DEBUG: Red background to verify canvas works
+                ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // DEBUG: Yellow corner markers
+                ctx.fillStyle = "yellow";
+                ctx.fillRect(10, 10, 50, 50); // Top-left
+                ctx.fillRect(canvas.width - 60, 10, 50, 50); // Top-right
+                ctx.fillRect(10, canvas.height - 60, 50, 50); // Bottom-left
+                ctx.fillRect(canvas.width - 60, canvas.height - 60, 50, 50); // Bottom-right
+                
+                // FORCE VISIBLE TEXT
+                ctx.fillStyle = "white";
+                ctx.font = "bold 30px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText("AR FUNCIONANDO!", canvas.width / 2, canvas.height / 2 - 50);
+                
+                // Draw AR content
+                drawARContent();
+                
+                requestAnimationFrame(renderFrame);
+            }
+            
+            renderFrame();
+        }
+
+        function drawARContent() {
+            if (!experience || !experience.assets || experience.assets.length === 0) {
+                ctx.fillStyle = "white";
+                ctx.font = "20px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText("Sin contenido AR", canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            const asset = experience.assets[currentAssetIndex];
+            if (!asset) return;
+            
+            const centerX = canvas.width * arObjectPosition.x;
+            const centerY = canvas.height * arObjectPosition.y;
+            const size = 120 * arObjectScale;
+            
+            ctx.save();
+            
+            // Draw based on asset type
+            switch (asset.assetType) {
+                case 'message':
+                    drawMessage(asset, centerX, centerY, size);
+                    break;
+                case 'image':
+                    drawImage(asset, centerX, centerY, size);
+                    break;
+                case 'video':
+                    drawVideo(asset, centerX, centerY, size);
+                    break;
+                default:
+                    drawDefault(asset, centerX, centerY, size);
+                    break;
+            }
+            
+            ctx.restore();
+            
+            // Update status
+            document.getElementById('status').innerHTML = 
+                `🎯 ${asset.name} (${currentAssetIndex + 1}/${experience.assets.length})`;
+        }
+
+        function drawMessage(asset, x, y, size) {
+            const text = asset.assetContent || asset.name;
+            
+            // Background
+            ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.fillRect(x - size, y - size/2, size*2, size);
+            
+            // Border
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x - size, y - size/2, size*2, size);
+            
+            // Text
+            ctx.fillStyle = "white";
+            ctx.font = `${Math.max(16, size/8)}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(text, x, y);
+        }
+
+        function drawImage(asset, x, y, size) {
+            // Image placeholder
+            ctx.fillStyle = "rgba(100, 100, 255, 0.8)";
+            ctx.fillRect(x - size/2, y - size/2, size, size);
+            
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x - size/2, y - size/2, size, size);
+            
+            ctx.fillStyle = "white";
+            ctx.font = "16px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("IMAGEN", x, y);
+        }
+
+        function drawVideo(asset, x, y, size) {
+            // Video placeholder
+            ctx.fillStyle = "rgba(255, 100, 100, 0.8)";
+            ctx.fillRect(x - size/2, y - size/2, size, size);
+            
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x - size/2, y - size/2, size, size);
+            
+            // Play button
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.moveTo(x - size/6, y - size/4);
+            ctx.lineTo(x - size/6, y + size/4);
+            ctx.lineTo(x + size/4, y);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.font = "14px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("VIDEO", x, y + size/2 - 10);
+        }
+
+        function drawDefault(asset, x, y, size) {
+            // Default circle
+            ctx.fillStyle = "rgba(255, 0, 0, 0.8)";
+            ctx.beginPath();
+            ctx.arc(x, y, size/2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            ctx.fillStyle = "white";
+            ctx.font = "bold 16px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("AR", x, y);
+        }
+
+        // Controls
+        function nextAsset() {
+            if (experience && experience.assets) {
+                currentAssetIndex = (currentAssetIndex + 1) % experience.assets.length;
+            }
+        }
+
+        function previousAsset() {
+            if (experience && experience.assets) {
+                currentAssetIndex = (currentAssetIndex - 1 + experience.assets.length) % experience.assets.length;
+            }
+        }
+
+        function centerObject() {
+            arObjectPosition = {x: 0.5, y: 0.5};
+        }
+
+        function resetScale() {
+            arObjectScale = 1.0;
+        }
+
+        // Touch/Mouse controls
+        let isDragging = false;
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDragging = true;
+        });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (isDragging && e.touches.length === 1) {
+                const touch = e.touches[0];
+                const rect = canvas.getBoundingClientRect();
+                arObjectPosition.x = (touch.clientX - rect.left) / rect.width;
+                arObjectPosition.y = (touch.clientY - rect.top) / rect.height;
+            }
+        });
+        
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDragging = false;
+        });
+        
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const rect = canvas.getBoundingClientRect();
+                arObjectPosition.x = (e.clientX - rect.left) / rect.width;
+                arObjectPosition.y = (e.clientY - rect.top) / rect.height;
+            }
+        });
+        
+        canvas.addEventListener('mouseup', (e) => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>

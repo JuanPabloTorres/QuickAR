@@ -1,0 +1,99 @@
+/* Model Viewer Styles */
+/* Custom styles for model-viewer web component */
+
+model-viewer {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+model-viewer::part(default-ar-button) {
+  display: none;
+}
+
+/* Loading animation */
+model-viewer[loading]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Poster styling */
+model-viewer[poster]::part(default-poster) {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Hotspot styling for AR annotations */
+model-viewer .Hotspot {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+model-viewer .Hotspot:hover {
+  background: white;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Progress bar */
+model-viewer > #lazy-load-poster {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-size: cover;
+}
+
+model-viewer .progress-bar {
+  display: block;
+  width: 33%;
+  height: 10%;
+  max-height: 2%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  border-radius: 25px;
+  box-shadow: 0px 3px 10px 3px rgba(0, 0, 0, 0.5), 0px 0px 5px 1px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+model-viewer .progress-bar.hide {
+  visibility: hidden;
+  transition: visibility 0.3s;
+}
+
+model-viewer .update-bar {
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 0%;
+  height: 100%;
+  border-radius: 25px;
+  float: left;
+  transition: width 0.3s;
+}

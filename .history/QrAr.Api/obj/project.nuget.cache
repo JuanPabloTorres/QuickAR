@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7MqUKuB628c=",
+  "dgSpecHash": "yOSuWwE6bzs=",
   "success": true,
-  "projectFilePath": "C:\\Users\\juanp\\source\\repos\\QR-App\\.history\\QrAr.Api\\QrAr.Api_20250930220315.csproj",
+  "projectFilePath": "C:\\Users\\juanp\\source\\repos\\QR-App\\.history\\QrAr.Api\\QrAr.Api_20250930212246.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\juanp\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\juanp\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
