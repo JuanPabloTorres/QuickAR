@@ -4,6 +4,7 @@ import {
   ChangePasswordRequest,
   LoginRequest,
   RegisterRequest,
+  UpdateProfileRequest,
   User,
 } from "@/types/auth";
 
@@ -203,6 +204,23 @@ class AuthService {
   // Get current user info
   async getCurrentUser(): Promise<ApiResponse<User>> {
     return this.makeRequest<User>("/me");
+  }
+
+  // Update user profile
+  async updateProfile(
+    profileData: UpdateProfileRequest
+  ): Promise<ApiResponse<User>> {
+    const response = await this.makeRequest<User>("/profile", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+
+    // Update local user data if successful
+    if (response.success && response.data) {
+      this.setUser(response.data);
+    }
+
+    return response;
   }
 
   // Change password

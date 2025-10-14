@@ -73,4 +73,20 @@ namespace QrAr.Api.DTOs
         [Compare("NewPassword")]
         public string ConfirmNewPassword { get; set; } = string.Empty;
     }
+
+    public class UpdateProfileDto
+    {
+        [MaxLength(100)]
+        public string? Username { get; set; }
+
+        [EmailAddress]
+        [MaxLength(255)]
+        public string? Email { get; set; }
+
+        [MaxLength(100)]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100)]
+        public string? LastName { get; set; }
+    }
 }

@@ -6,6 +6,7 @@ import {
   ChangePasswordRequest,
   LoginRequest,
   RegisterRequest,
+  UpdateProfileRequest,
   User,
 } from "@/types/auth";
 import { useRouter } from "next/navigation";
@@ -158,6 +159,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const updateProfile = async (
+    data: UpdateProfileRequest
+  ): Promise<boolean> => {
+    try {
+      const response = await authService.updateProfile(data);
+      if (response.success && response.data) {
+        setUser(response.data);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Update profile error:", error);
+      return false;
+    }
+  };
+
   const isAuthenticated = !!token && !!user && authService.isAuthenticated();
 
   const value: AuthContextType = {
@@ -168,6 +185,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     changePassword,
+    updateProfile,
     isAuthenticated,
   };
 

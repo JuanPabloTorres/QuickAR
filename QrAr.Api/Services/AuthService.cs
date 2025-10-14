@@ -135,6 +135,72 @@ namespace QrAr.Api.Services
             }
         }
 
+        public async Task<ApiResponse<UserDto>> UpdateProfileAsync(Guid userId, UpdateProfileDto updateProfileDto)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                {
+                    return ApiResponse<UserDto>.ErrorResult("User not found");
+                }
+
+                // Check if username is being changed and if it's already taken
+                if (!string.IsNullOrWhiteSpace(updateProfileDto.Username) &&
+                    updateProfileDto.Username != user.Username)
+                {
+                    var existingUsername = await _context.Users
+                        .AnyAsync(u => u.Username.ToLower() == updateProfileDto.Username.ToLower() && u.Id != userId);
+
+                    if (existingUsername)
+                    {
+                        return ApiResponse<UserDto>.ErrorResult("Username is already taken");
+                    }
+
+                    user.Username = updateProfileDto.Username;
+                }
+
+                // Check if email is being changed and if it's already taken
+                if (!string.IsNullOrWhiteSpace(updateProfileDto.Email) &&
+                    updateProfileDto.Email != user.Email)
+                {
+                    var existingEmail = await _context.Users
+                        .AnyAsync(u => u.Email.ToLower() == updateProfileDto.Email.ToLower() && u.Id != userId);
+
+                    if (existingEmail)
+                    {
+                        return ApiResponse<UserDto>.ErrorResult("Email is already taken");
+                    }
+
+                    user.Email = updateProfileDto.Email;
+                    user.IsEmailConfirmed = false; // Reset email confirmation when email changes
+                }
+
+                // Update other fields
+                if (updateProfileDto.FirstName != null)
+                {
+                    user.FirstName = updateProfileDto.FirstName;
+                }
+
+                if (updateProfileDto.LastName != null)
+                {
+                    user.LastName = updateProfileDto.LastName;
+                }
+
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                return ApiResponse<UserDto>.SuccessResult(MapToUserDto(user));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating profile for user: {UserId}", userId);
+                return ApiResponse<UserDto>.ErrorResult("An error occurred while updating profile");
+            }
+        }
+
         public async Task<ApiResponse<bool>> ChangePasswordAsync(Guid userId, ChangePasswordDto changePasswordDto)
         {
             try
