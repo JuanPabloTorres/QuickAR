@@ -35,7 +35,7 @@ import { ChangePasswordRequest } from "@/types/auth";
 import { useEffect, useState } from "react";
 
 export default function ProfilePage() {
-  const { user, changePassword } = useAuth();
+  const { user, changePassword, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showAchievement, setShowAchievement] = useState(false);
@@ -88,21 +88,27 @@ export default function ProfilePage() {
     setMessage(null);
 
     try {
-      // Here you would call an API to update profile
-      // For now, we'll simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const success = await updateProfile(profileData);
 
-      setMessage({ type: "success", text: "Perfil actualizado exitosamente" });
-      setIsEditing(false);
+      if (success) {
+        setMessage({ type: "success", text: "Perfil actualizado exitosamente" });
+        setIsEditing(false);
 
-      // Trigger achievement
-      setNewAchievement({
-        title: "🎯 Perfil Actualizado",
-        description: "¡Has personalizado tu perfil!",
+        // Trigger achievement
+        setNewAchievement({
+          title: "🎯 Perfil Actualizado",
+          description: "¡Has personalizado tu perfil!",
+        });
+        setShowAchievement(true);
+      } else {
+        setMessage({ type: "error", text: "Error al actualizar el perfil" });
+      }
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      setMessage({ 
+        type: "error", 
+        text: error?.message || "Error al actualizar el perfil" 
       });
-      setShowAchievement(true);
-    } catch (error) {
-      setMessage({ type: "error", text: "Error al actualizar el perfil" });
     } finally {
       setIsLoading(false);
     }

@@ -38,6 +38,13 @@ export interface ChangePasswordRequest {
   confirmNewPassword: string;
 }
 
+export interface UpdateProfileRequest {
+  username?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -54,6 +61,7 @@ export interface AuthContextType {
   register: (data: RegisterRequest) => Promise<boolean>;
   logout: () => Promise<void>;
   changePassword: (data: ChangePasswordRequest) => Promise<boolean>;
+  updateProfile: (data: UpdateProfileRequest) => Promise<boolean>;
   isAuthenticated: boolean;
 }
 

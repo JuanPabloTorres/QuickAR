@@ -148,7 +148,7 @@ namespace QrAr.Api.Services
                 }
 
                 // Check if username is being changed and if it's already taken
-                if (!string.IsNullOrWhiteSpace(updateProfileDto.Username) && 
+                if (!string.IsNullOrWhiteSpace(updateProfileDto.Username) &&
                     updateProfileDto.Username != user.Username)
                 {
                     var existingUsername = await _context.Users
@@ -163,7 +163,7 @@ namespace QrAr.Api.Services
                 }
 
                 // Check if email is being changed and if it's already taken
-                if (!string.IsNullOrWhiteSpace(updateProfileDto.Email) && 
+                if (!string.IsNullOrWhiteSpace(updateProfileDto.Email) &&
                     updateProfileDto.Email != user.Email)
                 {
                     var existingEmail = await _context.Users
