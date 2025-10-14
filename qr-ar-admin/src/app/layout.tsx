@@ -1,5 +1,6 @@
 import { AppLayout } from "@/components/AppLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter, Manrope, Orbitron } from "next/font/google";
@@ -78,18 +79,20 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${orbitron.variable} ${manrope.variable} font-inter antialiased`}
       >
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white relative overflow-hidden">
+        <div className="min-h-screen bg-slate-50 dark:bg-gradient-to-br dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white relative overflow-hidden transition-colors duration-300">
           {/* Futuristic background pattern */}
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-gradient-to-r from-sky-500/10 via-transparent to-indigo-500/10" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-900/20 via-transparent to-transparent" />
+          <div className="absolute inset-0 opacity-30 dark:opacity-20">
+            <div className="absolute inset-0 bg-gradient-to-r from-sky-500/20 via-transparent to-indigo-500/20 dark:from-sky-500/10 dark:via-transparent dark:to-indigo-500/10" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-200/30 via-transparent to-transparent dark:from-sky-900/20 dark:via-transparent dark:to-transparent" />
           </div>
 
           {/* Content */}
           <div className="relative z-10 flex flex-col min-h-screen">
-            <AuthProvider>
-              <AppLayout>{children}</AppLayout>
-            </AuthProvider>
+            <ThemeProvider>
+              <AuthProvider>
+                <AppLayout>{children}</AppLayout>
+              </AuthProvider>
+            </ThemeProvider>
           </div>
         </div>
       </body>

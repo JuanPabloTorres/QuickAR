@@ -100,11 +100,45 @@ export interface ArCamera {
 
 // Analytics types
 export interface AnalyticsEvent {
+  id: string;
   eventType: string;
-  experienceId?: string;
-  assetId?: string;
-  metadata?: Record<string, any>;
-  timestamp: Date;
+  experienceId: string;
+  userAgent?: string;
+  ipAddress?: string;
+  referrer?: string;
+  additionalData?: string;
+  createdAt: string;
+}
+
+export interface AnalyticsSummary {
+  totalEvents: number;
+  totalViews: number;
+  uniqueUsers: number;
+  totalExperiences: number;
+  averageTimeSpent: number;
+  conversionRate: number;
+  lastEventDate?: string;
+  eventTypeBreakdown: Record<string, number>;
+}
+
+export interface DeviceStats {
+  deviceName: string;
+  count: number;
+  percentage: number;
+}
+
+export interface TimeSeriesData {
+  period: string;
+  views: number;
+  interactions: number;
+}
+
+export interface ExperienceStats {
+  experienceId: string;
+  experienceName: string;
+  viewCount: number;
+  interactionCount: number;
+  lastViewed?: string;
 }
 
 // UI state types

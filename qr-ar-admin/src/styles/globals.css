@@ -9,7 +9,7 @@
 
 @layer base {
   :root {
-    /* Futuristic Color Palette */
+    /* Dark Mode - Futuristic Color Palette */
     --background-primary: 15 23 42; /* #0f172a */
     --background-secondary: 2 6 23; /* #020617 */
     --foreground: 248 250 252; /* #f8fafc */
@@ -43,6 +43,36 @@
     --chart-3: 147 51 234; /* purple-600 */
     --chart-4: 34 197 94; /* green-500 */
     --chart-5: 245 158 11; /* amber-500 */
+  }
+
+  /* Light Mode */
+  :root:not(.dark) {
+    --background-primary: 248 250 252; /* #f8fafc */
+    --background-secondary: 241 245 249; /* #f1f5f9 */
+    --foreground: 15 23 42; /* #0f172a */
+    
+    /* Brand Colors remain the same */
+    --primary-sky: 14 165 233; /* #0ea5e9 - darker in light mode */
+    --primary-indigo: 79 70 229; /* #4f46e5 */
+    --primary-purple: 126 34 206; /* #7e22ce */
+    
+    /* UI Colors */
+    --muted: 203 213 225; /* #cbd5e1 */
+    --muted-foreground: 100 116 139; /* #64748b */
+    --border: 226 232 240; /* #e2e8f0 */
+    --input: 226 232 240; /* #e2e8f0 */
+    --card: 255 255 255; /* #ffffff */
+    --card-foreground: 15 23 42; /* #0f172a */
+    
+    /* Glass morphism for light mode */
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(15, 23, 42, 0.1);
+    --glass-shadow: rgba(0, 0, 0, 0.1);
+    
+    /* Success/Error */
+    --success: 22 163 74; /* #16a34a */
+    --warning: 217 119 6; /* #d97706 */
+    --error: 220 38 38; /* #dc2626 */
   }
 }
 

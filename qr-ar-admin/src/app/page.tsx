@@ -23,14 +23,15 @@ import {
   CelebrationIcon,
   CheckIcon,
   EyeIcon,
-  PackageIcon,
   PlusIcon,
   QrCodeIcon,
   RocketIcon,
   SettingsIcon,
   SparklesIcon,
   TrophyIcon,
+  UserIcon,
 } from "@/components/ui/svg-icons";
+import { analyticsService } from "@/services/analyticsService";
 import { apiService } from "@/services/api";
 import { Experience } from "@/types";
 import Link from "next/link";
@@ -46,14 +47,18 @@ export default function Dashboard() {
     description: string;
   } | null>(null);
 
-  // Fetch real data from backend
+  // Analytics data
+  const [totalViews, setTotalViews] = useState(0);
+  const [uniqueUsers, setUniqueUsers] = useState(0);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
+
+  // Fetch experiences from backend
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await apiService.getAllExperiences();
         if (response.success) {
-          // For now, create mock experiences with assets until backend is fully integrated
-          const mockExperiences: Experience[] = response.data.map(
+          const mappedExperiences: Experience[] = response.data.map(
             (exp: any) => ({
               id: exp.id,
               title: exp.title,
@@ -77,7 +82,7 @@ export default function Dashboard() {
               updatedAt: new Date(exp.updatedAt),
             })
           );
-          setExperiences(mockExperiences);
+          setExperiences(mappedExperiences);
         } else {
           setError("Failed to load experiences");
         }
@@ -92,14 +97,31 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
+  // Fetch analytics data
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await analyticsService.getSummary();
+        if (response.success && response.data) {
+          setTotalViews(response.data.totalViews);
+          setUniqueUsers(response.data.uniqueUsers);
+        }
+      } catch (err) {
+        console.error("Analytics fetch error:", err);
+      } finally {
+        setAnalyticsLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
   // Calculate stats from real data
   const stats = {
     totalExperiences: experiences.length,
     activeQRCodes: experiences.filter((exp) => exp.isActive).length,
-    totalViews: experiences.reduce(
-      (sum, exp) => sum + ((exp as any).viewCount || 0),
-      0
-    ), // TODO: Add viewCount to Experience type
+    totalViews: totalViews,
+    uniqueUsers: uniqueUsers,
     totalAssets: experiences.reduce(
       (sum, exp) => sum + (exp.assets ? exp.assets.length : 0),
       0
@@ -153,6 +175,8 @@ export default function Dashboard() {
     "¡Eres un mago del AR! 🎩⭐",
     "¡Transformando realidades una experiencia a la vez! 🌈",
     "¡El AR nunca fue tan emocionante! 🎯🚀",
+    "¡Creando el futuro de la realidad aumentada! 💫",
+    "¡Tus experiencias inspiran a otros! 🎨✨",
   ];
 
   const [funMessage, setFunMessage] = useState(messages[0]);
@@ -162,28 +186,8 @@ export default function Dashboard() {
     setIsClient(true);
     // Only set random message on client side
     setFunMessage(messages[Math.floor(Math.random() * messages.length)]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const recentActivity = [
-    {
-      id: 1,
-      type: "create",
-      title: "Experiencia Producto AR",
-      time: "Hace 2 horas",
-    },
-    {
-      id: 2,
-      type: "view",
-      title: "Demo Showroom Virtual",
-      time: "Hace 4 horas",
-    },
-    {
-      id: 3,
-      type: "update",
-      title: "Catálogo 3D Interactivo",
-      time: "Hace 1 día",
-    },
-  ];
 
   return (
     <ProtectedRoute requireAuth={true}>
@@ -379,84 +383,6 @@ export default function Dashboard() {
           >
             <FuturisticCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <FuturisticCardTitle className="text-sm font-medium font-manrope">
-                Assets Totales
-              </FuturisticCardTitle>
-              <PackageIcon className="h-5 w-5 text-purple-400" size={20} />
-            </FuturisticCardHeader>
-            <FuturisticCardContent>
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <PackageIcon
-                    className="animate-pulse text-purple-400"
-                    size={24}
-                  />
-                  <div className="text-xl font-bold font-orbitron text-slate-400 animate-pulse">
-                    Loading...
-                  </div>
-                </div>
-              ) : (
-                <div className="text-2xl font-bold font-orbitron text-white hover:text-indigo-400 transition-colors cursor-default">
-                  {stats.totalAssets}
-                  {stats.totalAssets > 0 && (
-                    <SparklesIcon
-                      className="ml-2 inline-block animate-pulse text-purple-400"
-                      size={20}
-                    />
-                  )}
-                </div>
-              )}
-              <p className="text-xs text-slate-400 font-manrope">
-                <PackageIcon className="inline mr-1" size={12} />
-                Imágenes, videos y modelos 3D
-              </p>
-            </FuturisticCardContent>
-          </FuturisticCard>
-
-          <FuturisticCard
-            variant="neon"
-            className="transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/20"
-          >
-            <FuturisticCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <FuturisticCardTitle className="text-sm font-medium font-manrope">
-                Visualizaciones
-              </FuturisticCardTitle>
-              <EyeIcon className="h-5 w-5 text-yellow-400" size={20} />
-            </FuturisticCardHeader>
-            <FuturisticCardContent>
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <EyeIcon
-                    className="animate-bounce text-yellow-400"
-                    size={24}
-                  />
-                  <div className="text-xl font-bold font-orbitron text-slate-400 animate-pulse">
-                    Counting...
-                  </div>
-                </div>
-              ) : (
-                <div className="text-2xl font-bold font-orbitron text-white hover:text-yellow-400 transition-colors cursor-default">
-                  {stats.totalViews.toLocaleString()}
-                  {stats.totalViews > 100 && (
-                    <SparklesIcon
-                      className="ml-2 inline-block animate-ping text-yellow-400"
-                      size={20}
-                    />
-                  )}
-                </div>
-              )}
-              <p className="text-xs text-slate-400 font-manrope">
-                <EyeIcon className="inline mr-1" size={12} />
-                Total de visualizaciones
-              </p>
-            </FuturisticCardContent>
-          </FuturisticCard>
-
-          <FuturisticCard
-            variant="default"
-            className="transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20"
-          >
-            <FuturisticCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <FuturisticCardTitle className="text-sm font-medium font-manrope">
                 QR Activos
               </FuturisticCardTitle>
               <QrCodeIcon className="h-5 w-5 text-green-400" size={20} />
@@ -486,6 +412,84 @@ export default function Dashboard() {
               <p className="text-xs text-slate-400 font-manrope">
                 <QrCodeIcon className="inline mr-1" size={12} />
                 Experiencias publicadas
+              </p>
+            </FuturisticCardContent>
+          </FuturisticCard>
+
+          <FuturisticCard
+            variant="neon"
+            className="transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/20"
+          >
+            <FuturisticCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <FuturisticCardTitle className="text-sm font-medium font-manrope">
+                Visualizaciones
+              </FuturisticCardTitle>
+              <EyeIcon className="h-5 w-5 text-yellow-400" size={20} />
+            </FuturisticCardHeader>
+            <FuturisticCardContent>
+              {analyticsLoading ? (
+                <div className="flex items-center space-x-2">
+                  <EyeIcon
+                    className="animate-bounce text-yellow-400"
+                    size={24}
+                  />
+                  <div className="text-xl font-bold font-orbitron text-slate-400 animate-pulse">
+                    Counting...
+                  </div>
+                </div>
+              ) : (
+                <div className="text-2xl font-bold font-orbitron text-white hover:text-yellow-400 transition-colors cursor-default">
+                  {stats.totalViews.toLocaleString()}
+                  {stats.totalViews > 100 && (
+                    <SparklesIcon
+                      className="ml-2 inline-block animate-ping text-yellow-400"
+                      size={20}
+                    />
+                  )}
+                </div>
+              )}
+              <p className="text-xs text-slate-400 font-manrope">
+                <EyeIcon className="inline mr-1" size={12} />
+                Total de visualizaciones
+              </p>
+            </FuturisticCardContent>
+          </FuturisticCard>
+
+          <FuturisticCard
+            variant="default"
+            className="transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/20"
+          >
+            <FuturisticCardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <FuturisticCardTitle className="text-sm font-medium font-manrope">
+                Usuarios Únicos
+              </FuturisticCardTitle>
+              <UserIcon className="h-5 w-5 text-indigo-400" size={20} />
+            </FuturisticCardHeader>
+            <FuturisticCardContent>
+              {analyticsLoading ? (
+                <div className="flex items-center space-x-2">
+                  <UserIcon
+                    className="animate-pulse text-indigo-400"
+                    size={24}
+                  />
+                  <div className="text-xl font-bold font-orbitron text-slate-400 animate-pulse">
+                    Loading...
+                  </div>
+                </div>
+              ) : (
+                <div className="text-2xl font-bold font-orbitron text-white hover:text-indigo-400 transition-colors cursor-default">
+                  {stats.uniqueUsers.toLocaleString()}
+                  {stats.uniqueUsers > 10 && (
+                    <SparklesIcon
+                      className="ml-2 inline-block animate-pulse text-indigo-400"
+                      size={20}
+                    />
+                  )}
+                </div>
+              )}
+              <p className="text-xs text-slate-400 font-manrope">
+                <UserIcon className="inline mr-1" size={12} />
+                Visitantes diferentes
               </p>
             </FuturisticCardContent>
           </FuturisticCard>

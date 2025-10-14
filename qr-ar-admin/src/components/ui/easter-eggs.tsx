@@ -111,26 +111,77 @@ export function MotivationalQuote() {
   ];
 
   const [currentQuote, setCurrentQuote] = useState(quotes[0]);
+  const [isVisible, setIsVisible] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    // Only run random selection on client side
+    // Seleccionar una cita aleatoria inicial
     setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+
+    // Mostrar la cita después de 2 segundos de carga
+    const initialTimer = setTimeout(() => {
+      setIsVisible(true);
+
+      // Ocultar después de 5 segundos
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 5000);
+    }, 2000);
+
+    // Luego mostrar cada 60 segundos
+    const interval = setInterval(() => {
+      // Cambiar a una cita aleatoria
+      setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+      setIsVisible(true);
+
+      // Ocultar después de 5 segundos
+      setTimeout(() => {
+        setIsVisible(false);
+      }, 5000);
+    }, 60000);
+
+    return () => {
+      clearTimeout(initialTimer);
+      clearInterval(interval);
+    };
   }, []);
 
+  if (!isVisible) return null;
+
   return (
-    <div className="fixed bottom-4 right-4 max-w-xs opacity-80 hover:opacity-100 transition-opacity z-40">
+    <div className="fixed bottom-4 right-4 max-w-xs z-40 animate-in slide-in-from-bottom-5 fade-in duration-500">
       <FuturisticCard
         variant="glass"
         className="cursor-pointer hover:scale-105 transition-transform"
       >
         <FuturisticCardContent className="p-4">
-          <div className="flex items-center space-x-2">
-            <div className="text-2xl animate-pulse">{currentQuote.emoji}</div>
-            <p className="text-sm text-white font-manrope">
-              {currentQuote.text}
-            </p>
+          <div className="flex items-center justify-between space-x-3">
+            <div className="flex items-center space-x-2 flex-1">
+              <div className="text-2xl animate-pulse">{currentQuote.emoji}</div>
+              <p className="text-sm text-white font-manrope">
+                {currentQuote.text}
+              </p>
+            </div>
+            <button
+              onClick={() => setIsVisible(false)}
+              className="text-white/60 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-lg ml-2"
+              aria-label="Cerrar mensaje"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           </div>
         </FuturisticCardContent>
       </FuturisticCard>

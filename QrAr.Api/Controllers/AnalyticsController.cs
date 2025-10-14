@@ -48,7 +48,28 @@ public class AnalyticsEndpointGroup : BaseEndpointGroup
             .WithSummary("Obtener resumen de analytics")
             .WithDescription("Obtiene un resumen general de analytics del sistema")
             .WithEndpointLogging("GetAnalyticsSummary")
-            .Produces<ApiResponse<object>>(200);
+            .Produces<ApiResponse<AnalyticsSummaryDto>>(200);
+
+        // GET /api/v1/analytics/devices
+        group.MapGet("devices", GetDeviceStats)
+            .WithSummary("Obtener estadísticas por dispositivo")
+            .WithDescription("Obtiene la distribución de eventos por tipo de dispositivo")
+            .WithEndpointLogging("GetDeviceStats")
+            .Produces<ApiResponse<IEnumerable<DeviceStatsDto>>>(200);
+
+        // GET /api/v1/analytics/timeseries
+        group.MapGet("timeseries", GetTimeSeriesData)
+            .WithSummary("Obtener datos de serie temporal")
+            .WithDescription("Obtiene datos de eventos agrupados por período de tiempo")
+            .WithEndpointLogging("GetTimeSeriesData")
+            .Produces<ApiResponse<IEnumerable<TimeSeriesDataDto>>>(200);
+
+        // GET /api/v1/analytics/top-experiences
+        group.MapGet("top-experiences", GetTopExperiences)
+            .WithSummary("Obtener experiencias más vistas")
+            .WithDescription("Obtiene las experiencias con más visualizaciones")
+            .WithEndpointLogging("GetTopExperiences")
+            .Produces<ApiResponse<IEnumerable<ExperienceStatsDto>>>(200);
 
         // === ENDPOINTS LEGACY ===
 
@@ -82,7 +103,7 @@ public class AnalyticsEndpointGroup : BaseEndpointGroup
             .WithSummary("Obtener resumen de analytics (Legacy)")
             .WithDescription("Obtiene un resumen general de analytics del sistema")
             .WithEndpointLogging("GetAnalyticsSummary_Legacy")
-            .Produces<ApiResponse<object>>(200);
+            .Produces<ApiResponse<AnalyticsSummaryDto>>(200);
     }
 
     private static async Task<IResult> TrackEvent(AnalyticsEventCreateDto dto, IAnalyticsService service)
@@ -143,29 +164,61 @@ public class AnalyticsEndpointGroup : BaseEndpointGroup
     {
         try
         {
-            // Este sería un método nuevo en el servicio para obtener un resumen general
-            var allEvents = await service.GetEventsAsync(null, 1, 1000);
-
-            if (!allEvents.Success)
-            {
-                return HandleServiceResponse(allEvents);
-            }
-
-            var summary = new
-            {
-                TotalEvents = allEvents.Data?.Count() ?? 0,
-                LastEventDate = allEvents.Data?.Max(e => e.CreatedAt),
-                EventTypes = allEvents.Data?.GroupBy(e => e.EventType)
-                    .Select(g => new { EventType = g.Key, Count = g.Count() })
-                    .ToArray() ?? Array.Empty<object>()
-            };
-
-            var response = ApiResponse<object>.SuccessResult(summary);
-            return Results.Ok(response);
+            var result = await service.GetAnalyticsSummaryAsync();
+            return HandleServiceResponse(result);
         }
         catch (Exception ex)
         {
             return Results.Problem($"Error generating summary: {ex.Message}", statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> GetDeviceStats(IAnalyticsService service)
+    {
+        try
+        {
+            var result = await service.GetDeviceStatsAsync();
+            return HandleServiceResponse(result);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error retrieving device stats: {ex.Message}", statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> GetTimeSeriesData(int days = 30, IAnalyticsService service = null!)
+    {
+        if (days < 1 || days > 365)
+        {
+            return Results.BadRequest(ApiResponse<object>.ErrorResult("Days must be between 1 and 365"));
+        }
+
+        try
+        {
+            var result = await service.GetTimeSeriesDataAsync(days);
+            return HandleServiceResponse(result);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error retrieving time series data: {ex.Message}", statusCode: 500);
+        }
+    }
+
+    private static async Task<IResult> GetTopExperiences(int limit = 10, IAnalyticsService service = null!)
+    {
+        if (limit < 1 || limit > 100)
+        {
+            return Results.BadRequest(ApiResponse<object>.ErrorResult("Limit must be between 1 and 100"));
+        }
+
+        try
+        {
+            var result = await service.GetTopExperiencesAsync(limit);
+            return HandleServiceResponse(result);
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error retrieving top experiences: {ex.Message}", statusCode: 500);
         }
     }
 }

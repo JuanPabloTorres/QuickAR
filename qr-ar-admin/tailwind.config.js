@@ -81,6 +81,7 @@ module.exports = {
         "scale-in": "scaleIn 0.3s ease-out",
         "ar-float": "arFloat 3s ease-in-out infinite",
         "ar-pulse": "arPulse 2s ease-in-out infinite",
+        "shrink": "shrink 4s linear forwards",
       },
       keyframes: {
         fadeIn: {
@@ -102,6 +103,10 @@ module.exports = {
         arPulse: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
+        },
+        shrink: {
+          "0%": { width: "100%" },
+          "100%": { width: "0%" },
         },
       },
       backgroundImage: {

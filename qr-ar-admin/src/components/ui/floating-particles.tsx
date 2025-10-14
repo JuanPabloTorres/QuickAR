@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 // Simple floating decoration component without inline styles
 export function FloatingDecoration() {
   return (
@@ -21,29 +23,65 @@ export function AchievementNotification({
   achievement,
   show,
   onClose,
+  duration = 4000, // Duración por defecto: 4 segundos
 }: {
   achievement?: { title: string; description: string };
   show: boolean;
   onClose: () => void;
+  duration?: number;
 }) {
+  useEffect(() => {
+    if (show) {
+      // Auto-cerrar después de la duración especificada
+      const timer = setTimeout(() => {
+        onClose();
+      }, duration);
+
+      // Limpiar el timer si el componente se desmonta o si show cambia
+      return () => clearTimeout(timer);
+    }
+  }, [show, onClose, duration]);
+
   if (!show || !achievement) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-500">
-      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black p-4 rounded-xl shadow-2xl max-w-sm">
+    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right-5 fade-in duration-500">
+      <div className="bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 text-black p-5 rounded-xl shadow-2xl max-w-sm border-2 border-yellow-300/50 backdrop-blur-sm animate-pulse-slow">
         <div className="flex items-center space-x-3">
           <div className="text-3xl animate-bounce">🏆</div>
           <div className="flex-1">
-            <div className="font-bold text-sm">¡Logro Desbloqueado!</div>
-            <div className="font-orbitron text-xs">{achievement.title}</div>
-            <div className="text-xs opacity-90">{achievement.description}</div>
+            <div className="font-bold text-base mb-1">¡Logro Desbloqueado!</div>
+            <div className="font-orbitron text-sm font-semibold">
+              {achievement.title}
+            </div>
+            <div className="text-sm opacity-90 mt-1">
+              {achievement.description}
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-black/70 hover:text-black transition-colors"
+            className="text-black/60 hover:text-black transition-colors p-1 hover:bg-black/10 rounded-lg"
+            aria-label="Cerrar notificación"
           >
-            ✕
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
+        </div>
+
+        {/* Progress bar showing remaining time */}
+        <div className="mt-3 h-1 bg-black/20 rounded-full overflow-hidden">
+          <div className="h-full bg-black/40 rounded-full w-full animate-[shrink_4s_linear_forwards]" />
         </div>
       </div>
     </div>
