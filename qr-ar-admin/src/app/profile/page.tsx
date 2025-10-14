@@ -91,7 +91,10 @@ export default function ProfilePage() {
       const success = await updateProfile(profileData);
 
       if (success) {
-        setMessage({ type: "success", text: "Perfil actualizado exitosamente" });
+        setMessage({
+          type: "success",
+          text: "Perfil actualizado exitosamente",
+        });
         setIsEditing(false);
 
         // Trigger achievement
@@ -105,9 +108,9 @@ export default function ProfilePage() {
       }
     } catch (error: any) {
       console.error("Profile update error:", error);
-      setMessage({ 
-        type: "error", 
-        text: error?.message || "Error al actualizar el perfil" 
+      setMessage({
+        type: "error",
+        text: error?.message || "Error al actualizar el perfil",
       });
     } finally {
       setIsLoading(false);
